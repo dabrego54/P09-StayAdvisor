@@ -1,3 +1,6 @@
+// src/app/search/page.tsx
+// input de búsqueda por hotel agregado
+
 export default function SearchPage() {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white px-4 py-8">
