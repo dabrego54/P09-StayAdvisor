@@ -23,6 +23,9 @@ const mockHotels = [
   },
 ];
 
+// prueba de commit de bug aaaaa 
+//asdsadasdsa
+
 export default function SearchPage() {
   const [searchText, setSearchText] = useState('');
 
