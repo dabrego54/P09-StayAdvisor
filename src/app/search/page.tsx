@@ -82,7 +82,7 @@ export default function SearchPage() {
       {/* Sidebar Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className="fixed top-4 left-4 bg-blue-600 text-white p-3 rounded-full shadow-lg z-40 focus:outline-none hover:bg-blue-700 transition"
+        className="fixed top-4 left-4 bg-white text-black border border-gray-400 p-3 rounded-full shadow-lg z-40 focus:outline-none hover:bg-gray-100 transition"
       >
         ☰
       </button>
