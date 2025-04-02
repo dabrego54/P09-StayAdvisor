@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { filterHotels_Location } from '@/utils/filterHotelsByLocation'; // Import the filtering function
+import { filterHotels_Location } from '@/utils/filterHotelsByLocation';
+import { filterHotelsByPrice } from '@/utils/filterHotelsByPrice'; // Import the price filter function
 
 const mockHotels = [
   {
@@ -9,25 +10,29 @@ const mockHotels = [
     name: "Hotel Magnolia",
     location: "Santiago",
     experience: "Lujo clásico",
+    price: 150,
   },
   {
     id: 2,
     name: "Casa Andina Premium",
     location: "Cusco",
     experience: "Auténtico andino",
+    price: 200,
   },
   {
     id: 3,
     name: "Palacio Astoreca",
     location: "Valparaíso",
     experience: "Boutique frente al mar",
+    price: 180,
   },
 ];
 
 export default function SearchPage() {
   const [searchText, setSearchText] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to toggle sidebar visibility
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 300]); // State for price range
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -37,12 +42,21 @@ export default function SearchPage() {
     setSelectedLocation(e.target.value);
   };
 
+  const handlePriceRangeChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const newRange = [...priceRange];
+    newRange[index] = parseInt(e.target.value, 10);
+    setPriceRange(newRange as [number, number]);
+  };
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Use the filterHotels_Location function
-  const filteredHotels = filterHotels_Location(mockHotels, searchText, selectedLocation);
+  // Apply both location and price filters
+  let filteredHotels = filterHotels_Location(mockHotels, searchText, selectedLocation);
+  filteredHotels = filteredHotels.filter(
+    (hotel) => hotel.price >= priceRange[0] && hotel.price <= priceRange[1]
+  );
 
   return (
     <main className="min-h-screen flex bg-gradient-to-br from-blue-50 to-white">
@@ -76,6 +90,35 @@ export default function SearchPage() {
             <option value="Cusco">Cusco</option>
             <option value="Valparaíso">Valparaíso</option>
           </select>
+        </div>
+
+        {/* Price Range Filter */}
+        <div className="mb-6">
+          <label className="block text-gray-700 font-semibold mb-2">
+            Filtrar por rango de precio (USD)
+          </label>
+          <div className="flex items-center space-x-4">
+            <input
+              type="range"
+              min="0"
+              max="300"
+              value={priceRange[0]}
+              onChange={(e) => handlePriceRangeChange(e, 0)}
+              className="w-full"
+            />
+            <input
+              type="range"
+              min="0"
+              max="300"
+              value={priceRange[1]}
+              onChange={(e) => handlePriceRangeChange(e, 1)}
+              className="w-full"
+            />
+          </div>
+          <div className="flex justify-between text-sm text-gray-600 mt-2">
+            <span>${priceRange[0]}</span>
+            <span>${priceRange[1]}</span>
+          </div>
         </div>
       </aside>
 
@@ -118,7 +161,7 @@ export default function SearchPage() {
                 >
                   <h3 className="text-lg font-bold text-blue-800">{hotel.name}</h3>
                   <p className="text-sm text-gray-600">
-                    {hotel.location} — {hotel.experience}
+                    {hotel.location} — {hotel.experience} — ${hotel.price}
                   </p>
                 </div>
               ))

@@ -1,6 +1,7 @@
 //LANDING PAGE
 
 import Link from 'next/link';
+import { filterHotels_Location } from '@/utils/filterHotelsByLocation';
 
 export default function Home() {
   return (
