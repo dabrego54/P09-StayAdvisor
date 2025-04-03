@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import ExperienceSelector from '@/components/ExperiencieSelector';
 import ServiceFilter from '@/components/ServiceFilter';
+import { filterHotels } from '@/utils/filterHotels';
+
 
 
 // Datos simulados de hoteles
@@ -67,16 +69,11 @@ export default function SearchPage() {
   };
   
   
-  const filteredHotels = mockHotels.filter(hotel =>
-  (selectedExperience ? hotel.experience === selectedExperience : true) &&
-  selectedServices.every(service => hotel.services.includes(service)) &&
-  (
-    hotel.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    hotel.location.toLowerCase().includes(searchText.toLowerCase()) ||
-    hotel.experience.toLowerCase().includes(searchText.toLowerCase())
-  )
-);
-
+  const filteredHotels = filterHotels(mockHotels, {
+    experience: selectedExperience,
+    services: selectedServices,
+    searchText: searchText
+  });  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
