@@ -2,13 +2,34 @@
 
 import { useState } from 'react';
 import ExperienceSelector from '@/components/ExperiencieSelector';
+import ServiceFilter from '@/components/ServiceFilter';
+
 
 // Datos simulados de hoteles
 const mockHotels = [
-  { id: 1, name: "Hotel Magnolia", location: "Santiago", experience: "Lujo clásico" },
-  { id: 2, name: "Casa Andina Premium", location: "Cusco", experience: "Auténtico andino" },
-  { id: 3, name: "Palacio Astoreca", location: "Valparaíso", experience: "Boutique frente al mar" },
+  {
+    id: 1,
+    name: "Hotel Magnolia",
+    location: "Santiago",
+    experience: "Lujo clásico",
+    services: ["Wifi", "Desayuno"]
+  },
+  {
+    id: 2,
+    name: "Casa Andina Premium",
+    location: "Cusco",
+    experience: "Auténtico andino",
+    services: ["Wifi", "Piscina", "Spa"]
+  },
+  {
+    id: 3,
+    name: "Palacio Astoreca",
+    location: "Valparaíso",
+    experience: "Boutique frente al mar",
+    services: ["Desayuno", "Piscina"]
+  }
 ];
+
 
 const experienceOptions = ['Lujo clásico', 'Auténtico andino', 'Boutique frente al mar'];
 
@@ -16,6 +37,8 @@ export default function SearchPage() {
   const [selectedExperience, setSelectedExperience] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+
 
   const handleExperienceSelect = (experience: string) => {
     setSelectedExperience(experience);
@@ -31,14 +54,29 @@ export default function SearchPage() {
 
   const handleResetFilters = () => {
     setSelectedExperience('');
+    setSelectedServices([]);
   };
   
+
+  const handleServiceToggle = (service: string) => {
+    setSelectedServices(prev =>
+      prev.includes(service)
+        ? prev.filter(s => s !== service)
+        : [...prev, service]
+    );
+  };
+  
+  
   const filteredHotels = mockHotels.filter(hotel =>
-    (selectedExperience ? hotel.experience === selectedExperience : true) &&
-    (hotel.name.toLowerCase().includes(searchText.toLowerCase()) ||
-     hotel.location.toLowerCase().includes(searchText.toLowerCase()) ||
-     hotel.experience.toLowerCase().includes(searchText.toLowerCase()))
-  );
+  (selectedExperience ? hotel.experience === selectedExperience : true) &&
+  selectedServices.every(service => hotel.services.includes(service)) &&
+  (
+    hotel.name.toLowerCase().includes(searchText.toLowerCase()) ||
+    hotel.location.toLowerCase().includes(searchText.toLowerCase()) ||
+    hotel.experience.toLowerCase().includes(searchText.toLowerCase())
+  )
+);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
@@ -83,6 +121,14 @@ export default function SearchPage() {
             onSelect={handleExperienceSelect}
             options={experienceOptions}
           />
+
+          <h3 className="font-medium text-black mt-6 mb-2">Servicios</h3>
+          <ServiceFilter
+            selectedServices={selectedServices}
+            onChange={handleServiceToggle}
+            options={['Wifi', 'Desayuno', 'Piscina', 'Spa']}
+          />
+
           <button
             onClick={handleResetFilters}
             className="mt-6 w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
