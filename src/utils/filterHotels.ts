@@ -5,6 +5,7 @@ export interface Hotel {
     name: string;
     location: string;
     experience: string;
+    price: number;
     services: string[];
   }
   

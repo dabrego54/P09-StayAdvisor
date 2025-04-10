@@ -4,15 +4,7 @@ import ExperienceSelector from '@/components/ExperiencieSelector';
 import ServiceFilter from '@/components/ServiceFilter';
 import { filterHotels } from '@/utils/filterHotels';
 import hotelsData from '@/data/hotels.json';
-
-type Hotel = {
-  id: number;
-  name: string;
-  location: string;
-  experience: string;
-  price: number;
-  services: string[];
-};
+import type { Hotel } from '@/types/Hotel';
 
 const experienceOptions = ['Lujo clásico', 'Auténtico andino', 'Boutique frente al mar'];
 
@@ -51,7 +43,7 @@ export default function SearchPage() {
   };
 
   useEffect(() => {
-    setHotels(hotelsData);
+    setHotels(hotelsData as Hotel[]);
   }, []);
   
   
@@ -126,11 +118,24 @@ export default function SearchPage() {
       {/* Resultados */}
       <div className="mt-8 space-y-4 px-4 max-w-3xl mx-auto">
         <h2 className="text-xl font-semibold text-gray-700">Resultados</h2>
+
         {filteredHotels.length > 0 ? (
           filteredHotels.map((hotel) => (
             <div key={hotel.id} className="border p-4 rounded-xl shadow-sm bg-white hover:shadow-md transition">
               <h3 className="text-lg font-bold text-blue-800">{hotel.name}</h3>
-              <p className="text-sm text-gray-600">{hotel.location} — {hotel.experience}</p>
+              <p className="text-sm text-gray-600">
+                {hotel.location} — {hotel.experience}
+              </p>
+              <p className="text-sm text-gray-800 font-medium mt-1">
+                ${hotel.price} por noche
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {hotel.services.map((service) => (
+                  <span key={service} className="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded-full">
+                    {service}
+                  </span>
+                ))}
+              </div>
             </div>
           ))
         ) : (
