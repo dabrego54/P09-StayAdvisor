@@ -5,6 +5,7 @@ import Spinner from './Spinner'; // Import the Spinner component
 import { filterHotelsByPrice } from '@/utils/filterHotelsByPrice';
 import { filterHotels_Location } from '@/utils/filterHotelsByLocation';
 import HotelCard from '@/utils/HotelCard'; // Import the HotelCard component
+import FeaturedHotel from '@/utils/FeaturedHotel'; // Import the FeaturedHotel component
 
 const mockHotels: Hotel[] = [
   {
@@ -168,6 +169,9 @@ export default function SearchPage() {
           <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
             🔍 Buscar Hoteles Boutique
           </h1>
+
+          {/* Featured Hotel */}
+          <FeaturedHotel hotels={mockHotels} />
 
           {/* Search Input */}
           <form className="mb-6">
