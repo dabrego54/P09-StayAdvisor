@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Spinner from './Spinner'; // Import the Spinner component
 import { filterHotelsByPrice } from '@/utils/filterHotelsByPrice';
 import { filterHotels_Location } from '@/utils/filterHotelsByLocation';
+import HotelCard from '@/utils/HotelCard'; // Import the HotelCard component
 
 const mockHotels: Hotel[] = [
   {
@@ -180,21 +181,16 @@ export default function SearchPage() {
           </form>
 
           {/* Filtered Results */}
-          <div className="mt-8 space-y-4">
-            <h2 className="text-xl font-semibold text-gray-700">
-              Resultados simulados
-            </h2>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
             {filteredHotels.length > 0 ? (
               filteredHotels.map((hotel) => (
-                <div
+                <HotelCard
                   key={hotel.id}
-                  className="border p-4 rounded-xl shadow-sm bg-white hover:shadow-md transition"
-                >
-                  <h3 className="text-lg font-bold text-blue-800">{hotel.name}</h3>
-                  <p className="text-sm text-gray-600">
-                    {hotel.location} — {hotel.experience} — ${hotel.price}
-                  </p>
-                </div>
+                  name={hotel.name}
+                  price={hotel.price}
+                  location={hotel.location}
+                  experience={hotel.experience}
+                />
               ))
             ) : (
               <p className="text-gray-500">No se encontraron resultados</p>
