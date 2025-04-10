@@ -6,14 +6,14 @@ import { filterHotels } from '@/utils/filterHotels';
 import hotelsData from '@/data/hotels.json';
 import type { Hotel } from '@/types/Hotel';
 
-const experienceOptions = ['Lujo clásico', 'Auténtico andino', 'Boutique frente al mar'];
-
 export default function SearchPage() {
   const [selectedExperience, setSelectedExperience] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [hotels, setHotels] = useState<Hotel[]>([]);
+  const [experienceOptions, setExperienceOptions] = useState<string[]>([]);
+
 
 
   const handleExperienceSelect = (experience: string) => {
@@ -43,11 +43,16 @@ export default function SearchPage() {
   };
 
   useEffect(() => {
-    setHotels(hotelsData as Hotel[]);
+    const loadedHotels = hotelsData as Hotel[];
+    setHotels(loadedHotels);
+  
+    const uniqueExperiences = Array.from(
+      new Set(loadedHotels.map(h => h.experience))
+    );
+    setExperienceOptions(uniqueExperiences);
   }, []);
   
-  
-  
+
   const filteredHotels = filterHotels(hotels, {
     experience: selectedExperience,
     services: selectedServices,
