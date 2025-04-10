@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Spinner from './Spinner'; // Import the Spinner component
+import { filterHotelsByPrice } from '@/utils/filterHotelsByPrice';
 import { filterHotels_Location } from '@/utils/filterHotelsByLocation';
-import { filterHotelsByPrice } from '@/utils/filterHotelsByPrice'; // Import the price filter function
 
-const mockHotels = [
+const mockHotels: Hotel[] = [
   {
     id: 1,
     name: "Hotel Magnolia",
@@ -33,6 +34,29 @@ export default function SearchPage() {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 300]); // State for price range
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [filteredHotels, setFilteredHotels] = useState<Hotel[]>(mockHotels);
+
+  useEffect(() => {
+    // Simulate initial loading with setTimeout
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // 2 seconds delay
+
+    return () => clearTimeout(timer); // Cleanup timeout
+  }, []);
+
+  // Apply filters whenever searchText, selectedLocation, or priceRange changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      let hotels = filterHotels_Location(mockHotels, searchText, selectedLocation);
+      hotels = filterHotelsByPrice(hotels, priceRange[0], priceRange[1]); // Apply price range filter
+      setFilteredHotels(hotels);
+      setIsLoading(false); // Hide spinner
+    }, 500); // Simulate a short delay for filtering
+
+    return () => clearTimeout(timer); // Cleanup timeout
+  }, [priceRange, searchText, selectedLocation]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -43,20 +67,25 @@ export default function SearchPage() {
   };
 
   const handlePriceRangeChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const newRange = [...priceRange];
-    newRange[index] = parseInt(e.target.value, 10);
-    setPriceRange(newRange as [number, number]);
+    const value = parseInt(e.target.value, 10);
+    setPriceRange((prevRange) => {
+      const newRange = [...prevRange];
+      newRange[index] = value;
+      return newRange as [number, number];
+    });
+  };
+
+  const handlePriceRangeMouseUp = () => {
+    setIsLoading(true); // Show spinner
   };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Apply both location and price filters
-  let filteredHotels = filterHotels_Location(mockHotels, searchText, selectedLocation);
-  filteredHotels = filteredHotels.filter(
-    (hotel) => hotel.price >= priceRange[0] && hotel.price <= priceRange[1]
-  );
+  if (isLoading) {
+    return <Spinner />; // Show spinner while loading
+  }
 
   return (
     <main className="min-h-screen flex bg-gradient-to-br from-blue-50 to-white">
@@ -104,6 +133,7 @@ export default function SearchPage() {
               max="300"
               value={priceRange[0]}
               onChange={(e) => handlePriceRangeChange(e, 0)}
+              onMouseUp={handlePriceRangeMouseUp} // Trigger spinner after releasing the mouse
               className="w-full"
             />
             <input
@@ -112,6 +142,7 @@ export default function SearchPage() {
               max="300"
               value={priceRange[1]}
               onChange={(e) => handlePriceRangeChange(e, 1)}
+              onMouseUp={handlePriceRangeMouseUp} // Trigger spinner after releasing the mouse
               className="w-full"
             />
           </div>
