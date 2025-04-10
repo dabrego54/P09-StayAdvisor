@@ -64,16 +64,21 @@ export default function SearchPage() {
       {/* Barra de búsqueda */}
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 m-auto mt-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-          🔍 Buscar Hoteles Boutique
+          Buscar Hoteles Boutique
         </h1>
 
-        <input
-          type="text"
-          value={searchText}
-          onChange={handleSearchChange}
-          placeholder="Ej: Casa Andina, Hotel Magnolia..."
-          className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-        />
+        <div className="relative">
+          <span className="absolute inset-y-0 left-3 flex items-center text-gray-500">
+    🔍
+          </span>
+          <input
+            type="text"
+            value={searchText}
+            onChange={handleSearchChange}
+            placeholder="Ej: Casa Andina, Hotel Magnolia..."
+            className="w-full pl-10 p-3 border border-gray-300 rounded-lg shadow-sm text-gray-800 placeholder-gray-500 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          />
+        </div>
 
         <button
           onClick={handleSidebarToggle}
