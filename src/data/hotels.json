@@ -1,0 +1,163 @@
+[
+    {
+      "id": 1,
+      "name": "Hotel Magnolia",
+      "location": "Santiago",
+      "experience": "Lujo clásico",
+      "price": 180,
+      "services": ["Wifi", "Desayuno"]
+    },
+    {
+      "id": 2,
+      "name": "Casa Andina Premium",
+      "location": "Cusco",
+      "experience": "Auténtico andino",
+      "price": 220,
+      "services": ["Wifi", "Piscina", "Spa"]
+    },
+    {
+      "id": 3,
+      "name": "Palacio Astoreca",
+      "location": "Valparaíso",
+      "experience": "Boutique frente al mar",
+      "price": 200,
+      "services": ["Desayuno", "Piscina"]
+    },
+    {
+      "id": 4,
+      "name": "The Singular Patagonia",
+      "location": "Puerto Natales",
+      "experience": "Naturaleza extrema",
+      "price": 300,
+      "services": ["Wifi", "Spa"]
+    },
+    {
+      "id": 5,
+      "name": "Explora Atacama",
+      "location": "San Pedro",
+      "experience": "Aventura desértica",
+      "price": 350,
+      "services": ["Wifi", "Desayuno", "Piscina"]
+    },
+    {
+      "id": 6,
+      "name": "Hotel Antumalal",
+      "location": "Pucón",
+      "experience": "Relax en la naturaleza",
+      "price": 240,
+      "services": ["Desayuno", "Spa"]
+    },
+    {
+      "id": 7,
+      "name": "Patagonia Camp",
+      "location": "Torres del Paine",
+      "experience": "Glamping de lujo",
+      "price": 400,
+      "services": ["Wifi", "Desayuno", "Spa"]
+    },
+    {
+      "id": 8,
+      "name": "Hotel AWA",
+      "location": "Puerto Varas",
+      "experience": "Boutique frente al lago",
+      "price": 260,
+      "services": ["Piscina", "Desayuno"]
+    },
+    {
+      "id": 9,
+      "name": "Tierra Chiloé",
+      "location": "Chiloé",
+      "experience": "Cultura local",
+      "price": 310,
+      "services": ["Wifi", "Piscina", "Spa"]
+    },
+    {
+      "id": 10,
+      "name": "Hotel Boutique Castillo Rojo",
+      "location": "Santiago",
+      "experience": "Lujo clásico",
+      "price": 170,
+      "services": ["Wifi", "Desayuno"]
+    },
+    {
+      "id": 11,
+      "name": "Zanzibar Boutique Hotel",
+      "location": "Iquique",
+      "experience": "Frente a la playa",
+      "price": 190,
+      "services": ["Desayuno", "Piscina"]
+    },
+    {
+      "id": 12,
+      "name": "Hacienda Histórica Marchigüe",
+      "location": "Colchagua",
+      "experience": "Viña y relax",
+      "price": 230,
+      "services": ["Spa", "Desayuno"]
+    },
+    {
+      "id": 13,
+      "name": "Hotel Noi Blend",
+      "location": "Santa Cruz",
+      "experience": "Boutique en viñedo",
+      "price": 210,
+      "services": ["Wifi", "Piscina"]
+    },
+    {
+      "id": 14,
+      "name": "Entre Cielos Luxury Wine Hotel",
+      "location": "Mendoza",
+      "experience": "Viña y lujo",
+      "price": 330,
+      "services": ["Wifi", "Desayuno", "Spa"]
+    },
+    {
+      "id": 15,
+      "name": "Awasi Iguazú",
+      "location": "Misiones",
+      "experience": "Selva y aventura",
+      "price": 370,
+      "services": ["Wifi", "Piscina", "Desayuno"]
+    },
+    {
+      "id": 16,
+      "name": "Las Balsas Relais & Châteaux",
+      "location": "Villa La Angostura",
+      "experience": "Lujo frente al lago",
+      "price": 340,
+      "services": ["Spa", "Desayuno"]
+    },
+    {
+      "id": 17,
+      "name": "Hotel Fauna",
+      "location": "Valparaíso",
+      "experience": "Arte urbano",
+      "price": 150,
+      "services": ["Wifi"]
+    },
+    {
+      "id": 18,
+      "name": "Hotel Cumbres",
+      "location": "Lago Ranco",
+      "experience": "Naturaleza y confort",
+      "price": 280,
+      "services": ["Piscina", "Desayuno"]
+    },
+    {
+      "id": 19,
+      "name": "AndBeyond Vira Vira",
+      "location": "Pucón",
+      "experience": "Aventura en la Araucanía",
+      "price": 390,
+      "services": ["Wifi", "Desayuno", "Spa"]
+    },
+    {
+      "id": 20,
+      "name": "El Mirador de Guadal",
+      "location": "Carretera Austral",
+      "experience": "Desconexión total",
+      "price": 220,
+      "services": ["Desayuno"]
+    }
+  ]
+  

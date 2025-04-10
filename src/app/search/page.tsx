@@ -1,37 +1,18 @@
 'use client'
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ExperienceSelector from '@/components/ExperiencieSelector';
 import ServiceFilter from '@/components/ServiceFilter';
 import { filterHotels } from '@/utils/filterHotels';
+import hotelsData from '@/data/hotels.json';
 
-
-
-// Datos simulados de hoteles
-const mockHotels = [
-  {
-    id: 1,
-    name: "Hotel Magnolia",
-    location: "Santiago",
-    experience: "Lujo clásico",
-    services: ["Wifi", "Desayuno"]
-  },
-  {
-    id: 2,
-    name: "Casa Andina Premium",
-    location: "Cusco",
-    experience: "Auténtico andino",
-    services: ["Wifi", "Piscina", "Spa"]
-  },
-  {
-    id: 3,
-    name: "Palacio Astoreca",
-    location: "Valparaíso",
-    experience: "Boutique frente al mar",
-    services: ["Desayuno", "Piscina"]
-  }
-];
-
+type Hotel = {
+  id: number;
+  name: string;
+  location: string;
+  experience: string;
+  price: number;
+  services: string[];
+};
 
 const experienceOptions = ['Lujo clásico', 'Auténtico andino', 'Boutique frente al mar'];
 
@@ -40,6 +21,7 @@ export default function SearchPage() {
   const [searchText, setSearchText] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [hotels, setHotels] = useState<Hotel[]>([]);
 
 
   const handleExperienceSelect = (experience: string) => {
@@ -67,9 +49,14 @@ export default function SearchPage() {
         : [...prev, service]
     );
   };
+
+  useEffect(() => {
+    setHotels(hotelsData);
+  }, []);
   
   
-  const filteredHotels = filterHotels(mockHotels, {
+  
+  const filteredHotels = filterHotels(hotels, {
     experience: selectedExperience,
     services: selectedServices,
     searchText: searchText
