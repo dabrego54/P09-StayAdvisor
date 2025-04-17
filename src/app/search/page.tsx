@@ -5,6 +5,8 @@ import ServiceFilter from '@/components/ServiceFilter';
 import { filterHotels } from '@/utils/filterHotels';
 import hotelsData from '@/data/hotels.json';
 import type { Hotel } from '@/types/Hotel';
+import Link from 'next/link';
+
 
 export default function SearchPage() {
   const [selectedExperience, setSelectedExperience] = useState<string>('');
@@ -146,6 +148,12 @@ export default function SearchPage() {
                   </span>
                 ))}
               </div>
+              <Link href={`/reserva?hotelId=${hotel.id}`}>
+                <button className="mt-3 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+                  Reservar
+                </button>
+              </Link>
+
             </div>
           ))
         ) : (
