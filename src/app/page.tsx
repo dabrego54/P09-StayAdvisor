@@ -5,7 +5,7 @@ import { filterHotels_Location } from '@/utils/filterHotelsByLocation';
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white to-blue-50 px-6 py-12">
+    <main className="min-h-screen f lex flex-col items-center justify-center bg-gradient-to-br from-white to-blue-50 px-6 py-12">
       <div className="text-center">
         <h1 className="text-5xl font-extrabold text-blue-700 mb-4">StayAdvisor</h1>
         <p className="text-gray-700 text-lg mb-8">

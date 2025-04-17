@@ -10,9 +10,10 @@ interface Hotel {
 
 interface FeaturedHotelProps {
   hotels: Hotel[];
+  filteredHotels: Hotel[];
 }
 
-export default function FeaturedHotel({ hotels }: FeaturedHotelProps) {
+export default function FeaturedHotel({ hotels, filteredHotels }: FeaturedHotelProps) {
   const [featuredHotel, setFeaturedHotel] = useState<Hotel | null>(null);
 
   useEffect(() => {
@@ -23,11 +24,32 @@ export default function FeaturedHotel({ hotels }: FeaturedHotelProps) {
     }
   }, [hotels]);
 
+  // Check if the featured hotel is in the filtered list
+  const isFeaturedInFiltered = featuredHotel
+    ? filteredHotels.some(hotel => hotel.id === featuredHotel.id)
+    : false;
+
+  // Only display the featured hotel if it qualifies under the filters
+  if (filteredHotels.length > 0 && !isFeaturedInFiltered) {
+    return null; // Do not display the featured hotel if it doesn't match the filters
+  }
+
+  // If no featured hotel is selected or no hotels are available, return null
   if (!featuredHotel) return null;
 
   return (
-    <div className="border-4 border-blue-600 rounded-lg shadow-lg p-8 bg-white mb-8">
-      <h2 className="text-2xl font-bold text-blue-800 mb-4">Mejor Calificado</h2>
+    <div
+      className={`border-4 rounded-lg shadow-lg p-8 mb-8 ${
+        isFeaturedInFiltered ? 'border-green-600 bg-green-100' : 'border-blue-600 bg-white'
+      }`}
+    >
+      <h2
+        className={`text-2xl font-bold mb-4 ${
+          isFeaturedInFiltered ? 'text-green-800' : 'text-blue-800'
+        }`}
+      >
+        {isFeaturedInFiltered ? 'Hotel Destacado en Filtros' : 'Mejor Calificado'}
+      </h2>
       <h3 className="text-xl font-bold text-gray-800 mb-2">{featuredHotel.name}</h3>
       <p className="text-gray-600 mb-1">
         <span className="font-semibold">Ubicación:</span> {featuredHotel.location}
