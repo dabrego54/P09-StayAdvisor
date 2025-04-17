@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface BookingFormProps {
@@ -34,6 +34,10 @@ export default function BookingForm({ onChange }: BookingFormProps) {
     onChange({ checkIn, checkOut, guests, fullName, email, phone, notes });
   };
 
+  useEffect(() => {
+    handleChange();
+  }, [checkIn, checkOut, guests, fullName, email, phone, notes]);
+
   return (
     <div className="max-w-xl mx-auto bg-white shadow-lg rounded-2xl p-8 mt-10 space-y-6">
       <h2 className="text-3xl font-bold text-gray-800 text-center mb-4">Reserva tu estadía</h2>
@@ -47,7 +51,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             id="checkin"
             type="date"
             value={checkIn}
-            onChange={(e) => { setCheckIn(e.target.value); handleChange(); }}
+            onChange={(e) => setCheckIn(e.target.value)}
             placeholder="dd-mm-aaaa"
             className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
           />
@@ -61,7 +65,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             id="checkout"
             type="date"
             value={checkOut}
-            onChange={(e) => { setCheckOut(e.target.value); handleChange(); }}
+            onChange={(e) => setCheckOut(e.target.value)}
             placeholder="dd-mm-aaaa"
             className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
           />
@@ -77,7 +81,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             min={1}
             max={10}
             value={guests}
-            onChange={(e) => { setGuests(Number(e.target.value)); handleChange(); }}
+            onChange={(e) => setGuests(Number(e.target.value))}
             className="rounded-lg border border-gray-300 p-3 text-gray-800 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
           />
         </div>
@@ -90,7 +94,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             id="fullName"
             type="text"
             value={fullName}
-            onChange={(e) => { setFullName(e.target.value); handleChange(); }}
+            onChange={(e) => setFullName(e.target.value)}
             placeholder="Ej: Vicente Köhler"
             className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
           />
@@ -104,7 +108,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             id="email"
             type="email"
             value={email}
-            onChange={(e) => { setEmail(e.target.value); handleChange(); }}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Ej: vicente@email.com"
             className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
           />
@@ -118,7 +122,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             id="phone"
             type="tel"
             value={phone}
-            onChange={(e) => { setPhone(e.target.value); handleChange(); }}
+            onChange={(e) => setPhone(e.target.value)}
             placeholder="Ej: +56 9 1234 5678"
             className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
           />
@@ -132,7 +136,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             id="notes"
             rows={3}
             value={notes}
-            onChange={(e) => { setNotes(e.target.value); handleChange(); }}
+            onChange={(e) => setNotes(e.target.value)}
             placeholder="Ej: Alergia al polvo, viajaré con mascota, etc."
             className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
           />
