@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface BookingFormProps {
-  onChange: (data: BookingData) => void;
+  onChange: (data: BookingData | null) => void;
 }
 
 export type BookingData = {
@@ -29,14 +29,39 @@ export default function BookingForm({ onChange }: BookingFormProps) {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [notes, setNotes] = useState('');
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 
-  const handleChange = () => {
-    onChange({ checkIn, checkOut, guests, fullName, email, phone, notes });
+  const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
+  const isFutureDate = (date: string) => new Date(date) >= new Date();
+
+  const validate = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!checkIn) newErrors.checkIn = 'La fecha de entrada es obligatoria';
+    else if (!isFutureDate(checkIn)) newErrors.checkIn = 'La fecha de entrada debe ser futura';
+    if (!checkOut) newErrors.checkOut = 'La fecha de salida es obligatoria';
+    else if (new Date(checkOut) <= new Date(checkIn)) newErrors.checkOut = 'Debe ser posterior a la entrada';
+    if (guests < 1) newErrors.guests = 'Debe haber al menos 1 huésped';
+    if (fullName.trim().length < 2) newErrors.fullName = 'Nombre demasiado corto';
+    if (!isValidEmail(email)) newErrors.email = 'Correo no válido';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   useEffect(() => {
-    handleChange();
+    if (validate()) {
+      onChange({ checkIn, checkOut, guests, fullName, email, phone, notes });
+    } else {
+      onChange(null);
+    }
   }, [checkIn, checkOut, guests, fullName, email, phone, notes]);
+
+  const handleBlur = (field: string) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+  };
+
+  const showError = (field: string) => touched[field] && errors[field];
 
   return (
     <div className="max-w-xl mx-auto bg-white shadow-lg rounded-2xl p-8 mt-10 space-y-6">
@@ -52,9 +77,10 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             type="date"
             value={checkIn}
             onChange={(e) => setCheckIn(e.target.value)}
-            placeholder="dd-mm-aaaa"
-            className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+            onBlur={() => handleBlur('checkIn')}
+            className="rounded-lg border p-3 text-gray-800 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
+          {showError('checkIn') && <p className="text-sm text-red-600 mt-1">{errors.checkIn}</p>}
         </div>
 
         <div className="flex flex-col">
@@ -66,9 +92,10 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             type="date"
             value={checkOut}
             onChange={(e) => setCheckOut(e.target.value)}
-            placeholder="dd-mm-aaaa"
-            className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+            onBlur={() => handleBlur('checkOut')}
+            className="rounded-lg border p-3 text-gray-800 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
+          {showError('checkOut') && <p className="text-sm text-red-600 mt-1">{errors.checkOut}</p>}
         </div>
 
         <div className="flex flex-col">
@@ -82,8 +109,10 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             max={10}
             value={guests}
             onChange={(e) => setGuests(Number(e.target.value))}
-            className="rounded-lg border border-gray-300 p-3 text-gray-800 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+            onBlur={() => handleBlur('guests')}
+            className="rounded-lg border p-3 text-gray-800 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
+          {showError('guests') && <p className="text-sm text-red-600 mt-1">{errors.guests}</p>}
         </div>
 
         <div className="flex flex-col">
@@ -95,9 +124,11 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             type="text"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
+            onBlur={() => handleBlur('fullName')}
             placeholder="Ej: Vicente Köhler"
-            className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+            className="rounded-lg border p-3 text-gray-800 placeholder-gray-500 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
+          {showError('fullName') && <p className="text-sm text-red-600 mt-1">{errors.fullName}</p>}
         </div>
 
         <div className="flex flex-col">
@@ -109,9 +140,11 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onBlur={() => handleBlur('email')}
             placeholder="Ej: vicente@email.com"
-            className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+            className="rounded-lg border p-3 text-gray-800 placeholder-gray-500 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
+          {showError('email') && <p className="text-sm text-red-600 mt-1">{errors.email}</p>}
         </div>
 
         <div className="flex flex-col">
@@ -124,7 +157,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Ej: +56 9 1234 5678"
-            className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+            className="rounded-lg border p-3 text-gray-800 placeholder-gray-500 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
@@ -138,7 +171,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Ej: Alergia al polvo, viajaré con mascota, etc."
-            className="rounded-lg border border-gray-300 p-3 text-gray-800 placeholder-gray-500 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+            className="rounded-lg border p-3 text-gray-800 placeholder-gray-500 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
       </div>
