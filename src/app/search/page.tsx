@@ -1,4 +1,7 @@
-'use client'
+// src/app/search/page.tsx
+
+'use client';
+
 import { useState, useEffect } from 'react';
 import ExperienceSelector from '@/components/ExperiencieSelector';
 import ServiceFilter from '@/components/ServiceFilter';
@@ -7,7 +10,6 @@ import hotelsData from '@/data/hotels.json';
 import type { Hotel } from '@/types/Hotel';
 import Link from 'next/link';
 
-
 export default function SearchPage() {
   const [selectedExperience, setSelectedExperience] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
@@ -15,8 +17,6 @@ export default function SearchPage() {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [experienceOptions, setExperienceOptions] = useState<string[]>([]);
-
-
 
   const handleExperienceSelect = (experience: string) => {
     setSelectedExperience(experience);
@@ -34,35 +34,42 @@ export default function SearchPage() {
     setSelectedExperience('');
     setSelectedServices([]);
   };
-  
 
   const handleServiceToggle = (service: string) => {
     setSelectedServices(prev =>
-      prev.includes(service)
-        ? prev.filter(s => s !== service)
-        : [...prev, service]
+      prev.includes(service) ? prev.filter(s => s !== service) : [...prev, service]
     );
   };
 
   useEffect(() => {
     const loadedHotels = hotelsData as Hotel[];
     setHotels(loadedHotels);
-  
+
     const uniqueExperiences = Array.from(
       new Set(loadedHotels.map(h => h.experience))
     );
     setExperienceOptions(uniqueExperiences);
   }, []);
-  
 
   const filteredHotels = filterHotels(hotels, {
     experience: selectedExperience,
     services: selectedServices,
     searchText: searchText
-  });  
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+      {/* Header con acceso */}
+      <header className="w-full px-6 py-4 flex justify-between items-center shadow-sm bg-white sticky top-0 z-10">
+        <h1 className="text-2xl font-bold text-blue-600">StayAdvisor</h1>
+        <Link
+          href="/login"
+          className="text-sm px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition"
+        >
+          Iniciar sesión / Registro
+        </Link>
+      </header>
+
       {/* Barra de búsqueda */}
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 m-auto mt-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
@@ -71,7 +78,7 @@ export default function SearchPage() {
 
         <div className="relative">
           <span className="absolute inset-y-0 left-3 flex items-center text-gray-500">
-    🔍
+            🔍
           </span>
           <input
             type="text"
@@ -123,7 +130,6 @@ export default function SearchPage() {
           >
             Limpiar filtros
           </button>
-
         </div>
       </div>
 
@@ -153,7 +159,6 @@ export default function SearchPage() {
                   Reservar
                 </button>
               </Link>
-
             </div>
           ))
         ) : (
