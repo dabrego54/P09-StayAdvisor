@@ -13,19 +13,57 @@ export default function LoginPage() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!email || !password || (isRegistering && !name)) {
       setError('Por favor completa todos los campos requeridos.');
       return;
     }
+  
     if (!/\S+@\S+\.\S+/.test(email)) {
       setError('Correo electrónico inválido.');
       return;
     }
-    setError('');
-    console.log({ name, email, password, action: isRegistering ? 'register' : 'login' });
+  
+    try {
+      const res = await fetch(isRegistering ? '/api/auth/register' : '/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(
+          isRegistering
+            ? { name, email, password }
+            : { email, password }
+        ),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        setError(data.message || 'Error al procesar la solicitud.');
+        return;
+      }
+  
+      if (isRegistering) {
+        alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
+        setIsRegistering(false);
+        setName('');
+        setPassword('');
+      } else {
+        alert(`¡Bienvenido, ${data.user.name}!`);
+        // Aquí podrías redirigir a la página principal o dashboard
+      }
+  
+      setEmail('');
+      setPassword('');
+      setError('');
+    } catch (err) {
+      console.error('Error:', err);
+      setError('Ocurrió un error inesperado.');
+    }
   };
+  
+  
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">

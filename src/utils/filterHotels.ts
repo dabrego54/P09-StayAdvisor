@@ -1,14 +1,7 @@
 // src/utils/filterHotels.ts
 
-export interface Hotel {
-    id: number;
-    name: string;
-    location: string;
-    experience: string;
-    price: number;
-    services: string[];
-  }
-  
+import type { Hotel } from '@/types/Hotel';
+
   interface FilterCriteria {
     experience?: string;
     services?: string[];
