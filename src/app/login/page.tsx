@@ -50,8 +50,11 @@ export default function LoginPage() {
         setName('');
         setPassword('');
       } else {
+        localStorage.setItem('user', JSON.stringify(data.user));
         alert(`¡Bienvenido, ${data.user.name}!`);
-        // Aquí podrías redirigir a la página principal o dashboard
+
+        router.push('/search');
+
       }
   
       setEmail('');

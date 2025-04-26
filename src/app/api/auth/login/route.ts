@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Aquí podrías generar token JWT o cookies más adelante
+    // tokens
 
     return NextResponse.json(
       { message: 'Login exitoso.', user: { id: user._id, name: user.name, email: user.email } },

@@ -9,6 +9,7 @@ import { filterHotels } from '@/utils/filterHotels';
 import hotelsData from '@/data/hotels.json';
 import type { Hotel } from '@/types/Hotel';
 import Link from 'next/link';
+import Header from '@/components/header';
 
 export default function SearchPage() {
   const [selectedExperience, setSelectedExperience] = useState<string>('');
@@ -59,16 +60,7 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
-      {/* Header con acceso */}
-      <header className="w-full px-6 py-4 flex justify-between items-center shadow-sm bg-white sticky top-0 z-10">
-        <h1 className="text-2xl font-bold text-blue-600">StayAdvisor</h1>
-        <Link
-          href="/login"
-          className="text-sm px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition"
-        >
-          Iniciar sesión / Registro
-        </Link>
-      </header>
+      <Header />
 
       {/* Barra de búsqueda */}
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 m-auto mt-6">

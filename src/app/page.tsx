@@ -1,21 +1,14 @@
-// src/app/page.tsx 
+// src/app/page.tsx
 
 'use client';
 
+import Header from '@/components/header';
 import Link from 'next/link';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white text-gray-800">
-      <header className="w-full px-6 py-4 flex justify-between items-center shadow-sm bg-white sticky top-0 z-10">
-        <h1 className="text-2xl font-bold text-blue-600">StayAdvisor</h1>
-        <Link
-          href="/login"
-          className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition"
-        >
-          Iniciar sesión / Registrarse
-        </Link>
-      </header>
+      <Header />
 
       <main className="px-6 py-20 max-w-5xl mx-auto text-center">
         <h2 className="text-4xl font-extrabold leading-snug mb-6">
@@ -31,12 +24,6 @@ export default function Home() {
             className="px-6 py-3 bg-blue-600 text-white text-lg font-medium rounded-lg shadow hover:bg-blue-700 transition"
           >
             Buscar Hoteles
-          </Link>
-          <Link
-            href="/login"
-            className="px-6 py-3 border border-blue-600 text-blue-600 text-lg font-medium rounded-lg hover:bg-blue-50 transition"
-          >
-            Iniciar sesión / Registro
           </Link>
         </div>
       </main>
