@@ -1,28 +1,25 @@
-// src/app/login/page.tsx
-
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+
 
 export default function LoginPage() {
-  const router = useRouter();
   const [isRegistering, setIsRegistering] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email || !password || (isRegistering && !name)) {
-      setError('Por favor completa todos los campos requeridos.');
-      return;
-    }
+    setError('');
   
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError('Correo electrónico inválido.');
+    if (!email || !password || (isRegistering && !name)) {
+      setError('Por favor completa todos los campos.');
       return;
     }
   
@@ -39,8 +36,8 @@ export default function LoginPage() {
   
       const data = await res.json();
   
-      if (!res.ok) {
-        setError(data.message || 'Error al procesar la solicitud.');
+      if (!res.ok || !data.success) {
+        setError(data.message || 'Error en la autenticación.');
         return;
       }
   
@@ -48,96 +45,89 @@ export default function LoginPage() {
         alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
         setIsRegistering(false);
         setName('');
+        setEmail('');
         setPassword('');
-      } else {
-        localStorage.setItem('user', JSON.stringify(data.user));
-        alert(`¡Bienvenido, ${data.user.name}!`);
-
-        router.push('/search');
-
+        return;
       }
   
-      setEmail('');
-      setPassword('');
-      setError('');
+      // 🔥 Guardamos el user en el Context
+      login(data.user);
+  
+      // 🔥 Redireccionar a /search con pequeño delay para asegurar Context actualizado
+      setTimeout(() => {
+        window.location.href = '/search';
+      }, 100); // 100 milisegundos
+  
     } catch (err) {
-      console.error('Error:', err);
+      console.error('Error en el login:', err);
       setError('Ocurrió un error inesperado.');
     }
   };
   
   
-
+  
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 space-y-6">
-        <h2 className="text-2xl font-bold text-center text-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center px-4">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center text-blue-600 mb-6">
           {isRegistering ? 'Crear cuenta' : 'Iniciar sesión'}
-        </h2>
-
+        </h1>
+  
         <form onSubmit={handleSubmit} className="space-y-4">
           {isRegistering && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Nombre completo</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full mt-1 p-3 border rounded-lg text-gray-800 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="Nombre completo"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400"
+            />
           )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Correo electrónico</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full mt-1 p-3 border rounded-lg text-gray-800 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Contraseña</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full mt-1 p-3 border rounded-lg text-gray-800 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          {error && <p className="text-red-600 text-sm mt-1 text-center">{error}</p>}
-
+          <input
+            type="email"
+            placeholder="Correo electrónico"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400"
+          />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400"
+          />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
           >
             {isRegistering ? 'Crear cuenta' : 'Ingresar'}
           </button>
         </form>
-
-        <p className="text-center text-sm text-gray-500">
-          {isRegistering ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'}{' '}
+  
+        <div className="mt-4 text-center space-y-2">
           <button
-            type="button"
-            className="text-blue-600 hover:underline"
             onClick={() => setIsRegistering(!isRegistering)}
+            className="text-blue-600 hover:underline text-sm"
           >
-            {isRegistering ? 'Inicia sesión' : 'Regístrate aquí'}
+            {isRegistering
+              ? '¿Ya tienes cuenta? Inicia sesión'
+              : '¿No tienes cuenta? Regístrate'}
           </button>
-        </p>
-
-        <div className="pt-2 text-center">
-          <button
-            onClick={() => router.back()}
-            className="text-sm text-gray-500 hover:text-gray-700 hover:underline"
-          >
-            ← Volver atrás
-          </button>
+  
+          {/* Botón para volver atrás */}
+          <div>
+            <button
+              onClick={() => window.location.href = '/'}
+              className="text-blue-600 hover:underline text-sm"
+            >
+              ← Volver al Inicio
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
+  
 }
