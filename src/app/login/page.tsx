@@ -50,10 +50,10 @@ export default function LoginPage() {
         return;
       }
   
-      // 🔥 Guardamos el user en el Context
+      // Guardamos el user en el Context
       login(data.user);
   
-      // 🔥 Redireccionar a /search con pequeño delay para asegurar Context actualizado
+      // Redireccionar a /search con pequeño delay para asegurar Context actualizado
       setTimeout(() => {
         window.location.href = '/search';
       }, 100); // 100 milisegundos
