@@ -1,5 +1,3 @@
-// src/components/BookingForm.tsx
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -64,8 +62,8 @@ export default function BookingForm({ onChange }: BookingFormProps) {
   const showError = (field: string) => touched[field] && errors[field];
 
   return (
-    <div className="max-w-xl mx-auto bg-white shadow-lg rounded-2xl p-8 mt-10 space-y-6">
-      <h2 className="text-3xl font-bold text-gray-800 text-center mb-4">Reserva tu estadía</h2>
+    <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-2xl p-6 sm:p-8 mt-8 space-y-6">
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-4">Reserva tu estadía</h2>
 
       <div className="flex flex-col gap-5">
         <div className="flex flex-col">
@@ -78,7 +76,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             value={checkIn}
             onChange={(e) => setCheckIn(e.target.value)}
             onBlur={() => handleBlur('checkIn')}
-            className="rounded-lg border p-3 text-gray-800 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="rounded-lg border p-3 sm:p-4 text-gray-800 text-sm sm:text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
           {showError('checkIn') && <p className="text-sm text-red-600 mt-1">{errors.checkIn}</p>}
         </div>
@@ -93,7 +91,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             value={checkOut}
             onChange={(e) => setCheckOut(e.target.value)}
             onBlur={() => handleBlur('checkOut')}
-            className="rounded-lg border p-3 text-gray-800 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="rounded-lg border p-3 sm:p-4 text-gray-800 text-sm sm:text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
           {showError('checkOut') && <p className="text-sm text-red-600 mt-1">{errors.checkOut}</p>}
         </div>
@@ -110,7 +108,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             value={guests}
             onChange={(e) => setGuests(Number(e.target.value))}
             onBlur={() => handleBlur('guests')}
-            className="rounded-lg border p-3 text-gray-800 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="rounded-lg border p-3 sm:p-4 text-gray-800 text-sm sm:text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
           {showError('guests') && <p className="text-sm text-red-600 mt-1">{errors.guests}</p>}
         </div>
@@ -126,7 +124,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             onChange={(e) => setFullName(e.target.value)}
             onBlur={() => handleBlur('fullName')}
             placeholder="Ej: Vicente Köhler"
-            className="rounded-lg border p-3 text-gray-800 placeholder-gray-500 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="rounded-lg border p-3 sm:p-4 text-gray-800 placeholder-gray-500 text-sm sm:text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
           {showError('fullName') && <p className="text-sm text-red-600 mt-1">{errors.fullName}</p>}
         </div>
@@ -142,7 +140,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => handleBlur('email')}
             placeholder="Ej: vicente@email.com"
-            className="rounded-lg border p-3 text-gray-800 placeholder-gray-500 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="rounded-lg border p-3 sm:p-4 text-gray-800 placeholder-gray-500 text-sm sm:text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
           {showError('email') && <p className="text-sm text-red-600 mt-1">{errors.email}</p>}
         </div>
@@ -157,7 +155,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Ej: +56 9 1234 5678"
-            className="rounded-lg border p-3 text-gray-800 placeholder-gray-500 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="rounded-lg border p-3 sm:p-4 text-gray-800 placeholder-gray-500 text-sm sm:text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
@@ -171,18 +169,18 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Ej: Alergia al polvo, viajaré con mascota, etc."
-            className="rounded-lg border p-3 text-gray-800 placeholder-gray-500 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="rounded-lg border p-3 sm:p-4 text-gray-800 placeholder-gray-500 text-sm sm:text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
       </div>
 
       <div className="flex justify-center mt-6">
-        <button
-          onClick={() => router.back()}
-          className="text-blue-600 border border-blue-500 px-5 py-2 rounded-lg hover:bg-blue-50 transition"
-        >
-          ← Volver atrás
-        </button>
+      <button
+        onClick={() => router.back()}
+        className="px-6 py-3 text-blue-600 border border-blue-500 rounded-lg hover:bg-blue-50 transition-transform transition-shadow duration-300 transform hover:scale-105 active:scale-95 text-sm sm:text-base"
+      >
+        ← Volver atrás
+      </button>
       </div>
     </div>
   );

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
-
 export default function LoginPage() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [name, setName] = useState('');
@@ -17,12 +16,12 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-  
+
     if (!email || !password || (isRegistering && !name)) {
       setError('Por favor completa todos los campos.');
       return;
     }
-  
+
     try {
       const res = await fetch(isRegistering ? '/api/auth/register' : '/api/auth/login', {
         method: 'POST',
@@ -33,14 +32,14 @@ export default function LoginPage() {
             : { email, password }
         ),
       });
-  
+
       const data = await res.json();
-  
+
       if (!res.ok || !data.success) {
         setError(data.message || 'Error en la autenticación.');
         return;
       }
-  
+
       if (isRegistering) {
         alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
         setIsRegistering(false);
@@ -49,30 +48,26 @@ export default function LoginPage() {
         setPassword('');
         return;
       }
-  
-      // Guardamos el user en el Context
+
       login(data.user);
-  
-      // Redireccionar a /search con pequeño delay para asegurar Context actualizado
+
       setTimeout(() => {
         window.location.href = '/search';
-      }, 100); // 100 milisegundos
-  
+      }, 100);
+
     } catch (err) {
       console.error('Error en el login:', err);
       setError('Ocurrió un error inesperado.');
     }
   };
-  
-  
-  
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center text-blue-600 mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center px-4 sm:px-6">
+      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md">
+        <h1 className="text-2xl sm:text-3xl font-bold text-center text-blue-600 mb-6">
           {isRegistering ? 'Crear cuenta' : 'Iniciar sesión'}
         </h1>
-  
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {isRegistering && (
             <input
@@ -80,7 +75,7 @@ export default function LoginPage() {
               placeholder="Nombre completo"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400"
+              className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400 text-sm sm:text-base"
             />
           )}
           <input
@@ -88,39 +83,38 @@ export default function LoginPage() {
             placeholder="Correo electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400"
+            className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400 text-sm sm:text-base"
           />
           <input
             type="password"
             placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400"
+            className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400 text-sm sm:text-base"
           />
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 sm:py-4 rounded-lg transition text-sm sm:text-base"
           >
             {isRegistering ? 'Crear cuenta' : 'Ingresar'}
           </button>
         </form>
-  
+
         <div className="mt-4 text-center space-y-2">
           <button
             onClick={() => setIsRegistering(!isRegistering)}
-            className="text-blue-600 hover:underline text-sm"
+            className="text-blue-600 hover:underline text-xs sm:text-sm"
           >
             {isRegistering
               ? '¿Ya tienes cuenta? Inicia sesión'
               : '¿No tienes cuenta? Regístrate'}
           </button>
-  
-          {/* Botón para volver atrás */}
+
           <div>
             <button
               onClick={() => window.location.href = '/'}
-              className="text-blue-600 hover:underline text-sm"
+              className="text-blue-600 hover:underline text-xs sm:text-sm"
             >
               ← Volver al Inicio
             </button>
@@ -129,5 +123,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-  
 }
