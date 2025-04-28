@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner'; 
 import type { BookingData } from '@/components/BookingForm';
 import type { Hotel } from '@/types/Hotel';
 
@@ -16,6 +17,10 @@ export default function ConfirmacionPage() {
     if (hotelData) setHotel(JSON.parse(hotelData));
     if (reservaData) setReserva(JSON.parse(reservaData));
     setReservationId(Math.floor(Math.random() * 1000000));
+
+    if (!hotelData || !reservaData) {
+      toast.error('No se encontraron datos de la reserva.');
+    }
   }, []);
 
   if (!hotel || !reserva) {
@@ -72,7 +77,6 @@ export default function ConfirmacionPage() {
         >
           🖨 Imprimir resumen
         </button>
-
       </div>
     </div>
   );

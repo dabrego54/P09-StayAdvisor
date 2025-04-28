@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner'; 
 
 export default function LoginPage() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -18,7 +19,7 @@ export default function LoginPage() {
     setError('');
 
     if (!email || !password || (isRegistering && !name)) {
-      setError('Por favor completa todos los campos.');
+      toast.error('Por favor completa todos los campos.');
       return;
     }
 
@@ -36,12 +37,12 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setError(data.message || 'Error en la autenticación.');
+        toast.error(data.message || 'Error en la autenticación.');
         return;
       }
 
       if (isRegistering) {
-        alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
+        toast.success('¡Registro exitoso! Ahora puedes iniciar sesión.');
         setIsRegistering(false);
         setName('');
         setEmail('');
@@ -51,13 +52,14 @@ export default function LoginPage() {
 
       login(data.user);
 
+      toast.success('¡Inicio de sesión exitoso! Bienvenido.');
       setTimeout(() => {
-        window.location.href = '/search';
+        router.push('/search');
       }, 100);
 
     } catch (err) {
       console.error('Error en el login:', err);
-      setError('Ocurrió un error inesperado.');
+      toast.error('Ocurrió un error inesperado.');
     }
   };
 
@@ -113,7 +115,7 @@ export default function LoginPage() {
 
           <div>
             <button
-              onClick={() => window.location.href = '/'}
+              onClick={() => router.push('/')}
               className="text-blue-600 hover:underline text-xs sm:text-sm"
             >
               ← Volver al Inicio

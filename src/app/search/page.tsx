@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import ExperienceSelector from '@/components/ExperienceSelector';
 import ServiceFilter from '@/components/ServiceFilter';
 import { filterHotels } from '@/utils/filterHotels';
-import hotelsData from '@/data/hotels.json';
+// ❌ Eliminamos: import hotelsData from '@/data/hotels.json';
 import type { Hotel } from '@/types/Hotel';
 import Link from 'next/link';
 import Header from '@/components/header';
@@ -16,6 +16,7 @@ export default function SearchPage() {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [experienceOptions, setExperienceOptions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true); // 🔵 Agregado para manejar carga
 
   const handleExperienceSelect = (experience: string) => {
     setSelectedExperience(experience);
@@ -41,13 +42,30 @@ export default function SearchPage() {
   };
 
   useEffect(() => {
-    const loadedHotels = hotelsData as Hotel[];
-    setHotels(loadedHotels);
+    const fetchHotels = async () => {
+      try {
+        const res = await fetch('/api/hotels');
+        const data = await res.json();
 
-    const uniqueExperiences = Array.from(
-      new Set(loadedHotels.map(h => h.experience))
-    );
-    setExperienceOptions(uniqueExperiences);
+        if (data.success) {
+          const loadedHotels = data.hotels as Hotel[];
+          setHotels(loadedHotels);
+
+          const uniqueExperiences = Array.from(
+            new Set(loadedHotels.map(h => h.experience))
+          );
+          setExperienceOptions(uniqueExperiences);
+        } else {
+          console.error('Error al cargar hoteles desde API');
+        }
+      } catch (error) {
+        console.error('Error de conexión a la API:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHotels();
   }, []);
 
   const filteredHotels = filterHotels(hotels, {
@@ -55,6 +73,14 @@ export default function SearchPage() {
     services: selectedServices,
     searchText: searchText
   });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">Cargando hoteles...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col">

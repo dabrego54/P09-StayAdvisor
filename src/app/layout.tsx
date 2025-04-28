@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+'use client';
+
 import { Geist, Geist_Mono } from "next/font/google";
-import { AuthProvider } from "@/context/AuthContext"; 
+import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,11 +15,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "StayAdvisor - Hoteles Boutique",
-  description: "Encuentra experiencias únicas en hoteles boutique de Chile.",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,6 +26,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
+          <Toaster richColors position="top-center" />
           {children}
         </AuthProvider>
       </body>
