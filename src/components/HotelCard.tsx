@@ -8,6 +8,13 @@ interface HotelCardProps {
   hotel: Hotel;
 }
 
+const serviceIcons: Record<string, string> = {
+  Wifi: '📶',
+  Desayuno: '🥐',
+  Piscina: '🏊‍♂️',
+  Spa: '💆‍♀️',
+};
+
 export default function HotelCard({ hotel }: HotelCardProps) {
   return (
     <div className="border p-4 rounded-xl shadow-sm bg-white hover:shadow-lg hover:-translate-y-1 transition-all">
@@ -38,9 +45,10 @@ export default function HotelCard({ hotel }: HotelCardProps) {
         {hotel.services.map((service) => (
           <span
             key={service}
-            className="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded-full"
+            className="flex items-center gap-1 bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded-full"
+            title={service}
           >
-            {service}
+            <span>{serviceIcons[service] || '❓'}</span> {service}
           </span>
         ))}
       </div>
