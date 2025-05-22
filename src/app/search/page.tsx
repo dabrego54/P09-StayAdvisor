@@ -8,6 +8,7 @@ import { filterHotels } from '@/utils/filterHotels';
 import type { Hotel } from '@/types/Hotel';
 import Link from 'next/link';
 import Header from '@/components/header';
+import HotelCard from '@/utils/HotelCard'; // Import the HotelCard component
 
 export default function SearchPage() {
   const [selectedExperience, setSelectedExperience] = useState<string>('');
