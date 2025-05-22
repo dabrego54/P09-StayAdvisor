@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner'; 
+import { toast } from 'sonner';
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -13,7 +13,7 @@ export default function Header() {
     try {
       await logout();
       toast.success('Sesión cerrada exitosamente.');
-      router.push('/'); // Redirige al home
+      router.push('/login'); 
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
       toast.error('Ocurrió un error al cerrar sesión.');
@@ -42,7 +42,7 @@ export default function Header() {
               Hola, {user.name.split(' ')[0]}
             </span>
             <button
-              onClick={handleLogout} 
+              onClick={handleLogout}
               className="text-sm px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition whitespace-nowrap"
             >
               Cerrar sesión
