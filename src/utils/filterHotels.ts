@@ -1,4 +1,5 @@
 // src/utils/filterHotels.ts
+// revisar el cambio
 
 import type { Hotel } from '@/types/Hotel';
 

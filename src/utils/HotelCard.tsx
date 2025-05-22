@@ -3,7 +3,7 @@ interface HotelCardProps {
   price: number;
   location: string;
   experience: string;
-  rating?: number; // Optional rating prop
+  rating?: number; // Optional rating prop 
 }
 
 export default function HotelCard({ name, price, location, experience, rating }: HotelCardProps) {
