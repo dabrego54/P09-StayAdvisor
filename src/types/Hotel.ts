@@ -7,5 +7,6 @@ export type Hotel = {
     experience: string;
     price: number;
     services: string[];
+    image?: string;
   };
   

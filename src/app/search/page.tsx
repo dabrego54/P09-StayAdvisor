@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import ExperienceSelector from '@/components/ExperienceSelector';
 import ServiceFilter from '@/components/ServiceFilter';
 import { filterHotels } from '@/utils/filterHotels';
-// ❌ Eliminamos: import hotelsData from '@/data/hotels.json';
+import HotelCard from '@/components/HotelCard';
 import type { Hotel } from '@/types/Hotel';
 import Link from 'next/link';
 import Header from '@/components/header';
@@ -157,34 +157,12 @@ export default function SearchPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {filteredHotels.length > 0 ? (
             filteredHotels.map((hotel) => (
-              <div
-                key={hotel.id}
-                className="border p-4 rounded-xl shadow-sm bg-white hover:shadow-lg hover:-translate-y-1 transition-all"
-              >
-                <h3 className="text-lg font-bold text-blue-800">{hotel.name}</h3>
-                <p className="text-sm text-gray-600">
-                  {hotel.location} — {hotel.experience}
-                </p>
-                <p className="text-sm text-gray-800 font-medium mt-1">
-                  ${hotel.price} por noche
-                </p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {hotel.services.map((service) => (
-                    <span key={service} className="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded-full">
-                      {service}
-                    </span>
-                  ))}
-                </div>
-                <Link href={`/reserva?hotelId=${hotel.id}`}>
-                  <button className="mt-4 w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 hover:shadow-lg transition-transform transition-shadow duration-300 transform hover:scale-105 active:scale-95 text-sm">
-                    Reservar
-                  </button>
-                </Link>
-              </div>
+              <HotelCard key={hotel.id} hotel={hotel} />
             ))
           ) : (
             <p className="text-gray-500">No se encontraron resultados</p>
           )}
+
         </div>
       </div>
     </div>

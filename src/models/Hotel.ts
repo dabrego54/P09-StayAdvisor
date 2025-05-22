@@ -7,6 +7,9 @@ const HotelSchema = new Schema({
   experience: { type: String, required: true },
   price: { type: Number, required: true },
   services: { type: [String], required: true },
+  image: { type: String, required: false },
 });
 
-export const HotelModel = models.Hotel || model('Hotel', HotelSchema);
+const Hotel = models.Hotel || model('Hotel', HotelSchema);
+
+export default Hotel;
