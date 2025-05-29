@@ -8,6 +8,7 @@ import HotelCard from '@/components/HotelCard';
 import type { Hotel } from '@/types/Hotel';
 import Link from 'next/link';
 import Header from '@/components/header';
+import  fetchRealHotels from '@/utils/fetchRealHotels';
 
 export default function SearchPage() {
   const [selectedExperience, setSelectedExperience] = useState<string>('');

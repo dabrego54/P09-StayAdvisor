@@ -1,6 +1,6 @@
 import { HotelReal } from '@/types/HotelReal';
 
-export async function fetchRealHotels(query: string): Promise<HotelReal[]> {
+export default async function fetchRealHotels(query: string): Promise<HotelReal[]> {
   try {
     const res = await fetch(`/api/searchHotels?query=${encodeURIComponent(query)}`);
     const data = await res.json();
