@@ -6,9 +6,10 @@ import type { HotelReal } from '@/types/HotelReal';
 type Props = {
   hotel: HotelReal;
   apiKey: string;
+  ranking?: number; // Nueva prop opcional
 };
 
-export default function HotelCard({ hotel, apiKey }: Props) {
+export default function HotelCard({ hotel, apiKey, ranking }: Props) {
   const [showReviews, setShowReviews] = useState(false);
 
   const photoUrl = hotel.photoReference
@@ -16,7 +17,13 @@ export default function HotelCard({ hotel, apiKey }: Props) {
     : '/default-hotel.jpg';
 
   return (
-    <div className="border rounded-lg shadow-md p-6 bg-white hover:shadow-lg transition flex flex-col">
+    <div className="border rounded-lg shadow-md p-6 bg-white hover:shadow-lg transition flex flex-col relative">
+      {/* Ranking badge */}
+      {ranking && (
+        <div className="absolute top-2 left-2 bg-yellow-400 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center shadow">
+          #{ranking}
+        </div>
+      )}
       <div className="relative w-full h-40 rounded-md overflow-hidden mb-3">
         <Image
           src={photoUrl}
@@ -36,7 +43,6 @@ export default function HotelCard({ hotel, apiKey }: Props) {
       <p className="text-gray-800 font-semibold mb-4">
         <span className="text-blue-600">$</span> {hotel.price} por noche
       </p>
-      {/* Fila inferior: botón y rating */}
       <div className="flex items-center justify-between mt-auto pt-2">
         <button
           className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition"

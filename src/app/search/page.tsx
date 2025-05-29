@@ -18,6 +18,7 @@ export default function SearchPage() {
   const [hotels, setHotels] = useState<HotelReal[]>([]);
   const [experienceOptions, setExperienceOptions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true); // 🔵 Agregado para manejar carga
+  const [sortByRating, setSortByRating] = useState(false);
 
   const handleExperienceSelect = (experience: string) => {
     setSelectedExperience(experience);
@@ -56,8 +57,13 @@ export default function SearchPage() {
     return () => clearTimeout(delayDebounce);
   }, [searchText]);
 
-
-  const filteredHotels = hotels;
+  // Ordena los hoteles según el toggle
+  const sortedHotels = [...hotels].sort((a, b) => {
+    if (!sortByRating) return 0; // Orden normal
+    // Primero por rating descendente, luego por cantidad de reseñas descendente
+    if (b.rating !== a.rating) return b.rating - a.rating;
+    return (b.totalRatings || 0) - (a.totalRatings || 0);
+  });
 
   // 🔧 Mostramos igual la interfaz aunque esté cargando
   return (
@@ -96,10 +102,28 @@ export default function SearchPage() {
       <div className="flex-1 mt-8 px-4 sm:px-6 max-w-5xl mx-auto w-full">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-700 mb-6">Resultados</h2>
 
+        <div className="flex justify-end mb-4">
+          <button
+            className={`px-4 py-2 rounded font-semibold border transition ${
+              sortByRating
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white text-blue-600 border-blue-600'
+            }`}
+            onClick={() => setSortByRating((v) => !v)}
+          >
+            {sortByRating ? 'Ordenar por defecto' : 'Ordenar por mejor calificación'}
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {filteredHotels.length > 0 ? (
-            filteredHotels.map((hotel) => (
-              <HotelCard key={hotel.placeId} hotel={hotel} apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY!} />
+          {sortedHotels.length > 0 ? (
+            sortedHotels.map((hotel, idx) => (
+              <HotelCard
+                key={hotel.placeId}
+                hotel={hotel}
+                apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY!}
+                ranking={sortByRating ? idx + 1 : undefined}
+              />
             ))
           ) : (
             <p className="text-gray-500">No se encontraron resultados</p>
