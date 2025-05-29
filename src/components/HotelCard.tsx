@@ -1,63 +1,37 @@
-'use client';
-
 import Image from 'next/image';
-import Link from 'next/link';
-import type { Hotel } from '@/types/Hotel';
+import type { HotelReal } from '@/types/HotelReal';
 
-interface HotelCardProps {
-  hotel: Hotel;
-}
-
-const serviceIcons: Record<string, string> = {
-  Wifi: '📶',
-  Desayuno: '🥐',
-  Piscina: '🏊‍♂️',
-  Spa: '💆‍♀️',
+type Props = {
+  hotel: HotelReal;
+  apiKey: string;
 };
 
-export default function HotelCard({ hotel }: HotelCardProps) {
+export default function HotelCard({ hotel, apiKey }: Props) {
+  const photoUrl = hotel.photoReference
+    ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${hotel.photoReference}&key=${apiKey}`
+    : '/default-hotel.jpg';
+
   return (
-    <div className="border p-4 rounded-xl shadow-sm bg-white hover:shadow-lg hover:-translate-y-1 transition-all">
-      <h3 className="text-lg font-bold text-blue-800">{hotel.name}</h3>
-
-      {hotel.image ? (
-        <Image
-          src={hotel.image}
-          alt={`Imagen de ${hotel.name}`}
-          width={300}
-          height={200}
-          className="rounded-lg object-cover mt-2"
-          priority={false}
-        />
-      ) : (
-        <div className="w-full h-48 bg-gray-200 rounded-lg mt-2 flex items-center justify-center text-gray-500 text-sm">
-          Sin imagen
+    <div className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
+      <div>
+        <h3 className="text-lg font-bold text-blue-700 mb-2">{hotel.name}</h3>
+        <div className="relative w-full h-40 rounded-md overflow-hidden mb-3">
+          <Image
+            src={photoUrl}
+            alt={hotel.name}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-md"
+          />
         </div>
-      )}
 
-      <p className="text-sm text-gray-600 mt-2">
-        {hotel.location} — {hotel.experience}
-      </p>
-
-      <p className="text-sm text-gray-800 font-medium mt-1">${hotel.price} por noche</p>
-
-      <div className="flex flex-wrap gap-2 mt-2">
-        {hotel.services.map((service) => (
-          <span
-            key={service}
-            className="flex items-center gap-1 bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded-full"
-            title={service}
-          >
-            <span>{serviceIcons[service] || '❓'}</span> {service}
-          </span>
-        ))}
+        <p className="text-sm text-gray-600 mb-1">{hotel.address}</p>
+        <p className="text-sm text-gray-700 mb-2">⭐ {hotel.rating} ({hotel.totalRatings} opiniones)</p>
       </div>
 
-      <Link href={`/reserva?hotelId=${hotel.id}`}>
-        <button className="mt-4 w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 hover:shadow-lg transition-transform transition-shadow duration-300 transform hover:scale-105 active:scale-95 text-sm">
-          Reservar
-        </button>
-      </Link>
+      <button className="mt-2 bg-blue-600 text-white text-sm py-2 px-4 rounded hover:bg-blue-700 transition">
+        Reservar
+      </button>
     </div>
   );
 }
