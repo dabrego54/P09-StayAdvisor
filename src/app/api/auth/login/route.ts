@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
 
+
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_key';
 
 export async function POST(request: Request) {
