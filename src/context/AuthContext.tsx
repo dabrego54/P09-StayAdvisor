@@ -11,13 +11,13 @@ interface User {
 interface AuthContextType {
   user: User | null;
   login: (user: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   login: () => {},
-  logout: () => {},
+  logout: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -37,21 +37,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', {
+      const res = await fetch('/api/auth/logout', {
         method: 'POST',
-        credentials: 'include', 
+        credentials: 'include',
       });
-  
+
+      if (!res.ok) {
+        throw new Error('Error al cerrar sesión');
+      }
+
       setUser(null);
       localStorage.removeItem('user');
-      window.location.href = '/';
     } catch (error) {
       console.error('Error cerrando sesión:', error);
+      throw error; 
     }
   };
-  
-  
-  
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>

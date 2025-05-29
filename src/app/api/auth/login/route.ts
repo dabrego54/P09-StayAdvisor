@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const user = await User.findOne({ email });
     if (!user) {
       return NextResponse.json(
-        { message: 'El usuario no existe.' },
+        { message: 'Contraseña o correo inválido.' },
         { status: 400 }
       );
     }
@@ -31,26 +31,28 @@ export async function POST(request: Request) {
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return NextResponse.json(
-        { message: 'Contraseña incorrecta.' },
+        { message: 'Contraseña o correo inválido.' },
         { status: 400 }
       );
     }
 
+
     // Crear token JWT
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      { id: user._id.toString(), email: user.email },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
 
+    const isProduction = process.env.NODE_ENV === 'production';
+
     const serialized = serialize('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
       sameSite: 'strict',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 días
+      maxAge: 60 * 60 * 24 * 7, // 7 días en segundos
     });
-    
 
     // Retornar datos básicos para guardar en localStorage
     const response = NextResponse.json(
@@ -58,18 +60,17 @@ export async function POST(request: Request) {
         success: true,
         message: 'Login exitoso.',
         user: {
-          id: user._id,
+          id: user._id.toString(),
           name: user.name,
           email: user.email,
         },
       },
       { status: 200 }
     );
-    
+
     response.headers.set('Set-Cookie', serialized);
-    
+
     return response;
-    
   } catch (error) {
     console.error('Error en login:', error);
     return NextResponse.json(
