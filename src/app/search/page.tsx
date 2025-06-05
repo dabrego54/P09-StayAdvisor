@@ -9,16 +9,21 @@ import type { Hotel } from '@/types/Hotel';
 import Link from 'next/link';
 import Header from '@/components/header';
 import  fetchRealHotels from '@/utils/fetchRealHotels';
+import { filterByCity } from '@/utils/filterByCity';
 
 export default function SearchPage() {
   const [selectedExperience, setSelectedExperience] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [services, setServices] = useState<string[]>([
+    "WiFi", "Desayuno", "Piscina", "Estacionamiento", "Gimnasio"
+  ]);
   const [hotels, setHotels] = useState<HotelReal[]>([]);
   const [experienceOptions, setExperienceOptions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true); // 🔵 Agregado para manejar carga
   const [sortByRating, setSortByRating] = useState(false);
+  const [selectedCity, setSelectedCity] = useState<string>(''); // Estado para la ciudad
 
   const handleExperienceSelect = (experience: string) => {
     setSelectedExperience(experience);
@@ -35,6 +40,7 @@ export default function SearchPage() {
   const handleResetFilters = () => {
     setSelectedExperience('');
     setSelectedServices([]);
+    setSelectedCity(''); // Reinicia la ciudad al limpiar filtros
   };
 
   const handleServiceToggle = (service: string) => {
@@ -63,6 +69,14 @@ export default function SearchPage() {
     // Primero por rating descendente, luego por cantidad de reseñas descendente
     if (b.rating !== a.rating) return b.rating - a.rating;
     return (b.totalRatings || 0) - (a.totalRatings || 0);
+  });
+
+  // Aplica los filtros antes de renderizar la lista:
+  const filteredByCity = filterByCity(hotels, selectedCity);
+  const filteredHotels = filterHotels(filteredByCity, {
+    experience: selectedExperience,
+    services: selectedServices,
+    searchText,
   });
 
   // 🔧 Mostramos igual la interfaz aunque esté cargando
@@ -116,8 +130,8 @@ export default function SearchPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {sortedHotels.length > 0 ? (
-            sortedHotels.map((hotel, idx) => (
+          {filteredHotels.length > 0 ? (
+            filteredHotels.map((hotel, idx) => (
               <HotelCard
                 key={hotel.placeId}
                 hotel={hotel}
@@ -130,6 +144,41 @@ export default function SearchPage() {
           )}
         </div>
       </div>
+
+      {isSidebarOpen && (
+  <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-lg p-6 z-50">
+    <button
+      onClick={() => setIsSidebarOpen(false)}
+      className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+      aria-label="Cerrar filtros"
+    >
+      ✕
+    </button>
+    <h3 className="text-lg font-bold mb-4">Filtros</h3>
+    <ExperienceSelector
+      selected={selectedExperience}
+      onSelect={setSelectedExperience}
+      options={experienceOptions}
+    />
+    <ServiceFilter
+      selectedServices={selectedServices}
+      onChange={service => {
+        setSelectedServices(prev =>
+          prev.includes(service)
+            ? prev.filter(s => s !== service)
+            : [...prev, service]
+        );
+      }}
+      services={services}
+    />
+    <button
+      onClick={handleResetFilters}
+      className="mt-6 w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 rounded"
+    >
+      Limpiar filtros
+    </button>
+  </div>
+)}
     </div>
   );
 }
