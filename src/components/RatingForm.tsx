@@ -8,12 +8,12 @@ interface RatingFormProps {
 
 export default function RatingForm({ hotelPlaceId }: RatingFormProps) {
   const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [alreadyRated, setAlreadyRated] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState(true);
 
-  // Verificar si el usuario ya calificó
   useEffect(() => {
     fetch(`/api/rating?placeId=${hotelPlaceId}`)
       .then(res => res.json())
@@ -41,7 +41,7 @@ export default function RatingForm({ hotelPlaceId }: RatingFormProps) {
       const res = await fetch("/api/rating", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hotelPlaceId, rating }),
+        body: JSON.stringify({ hotelPlaceId, rating, comment }),
       });
 
       const data = await res.json();
@@ -85,13 +85,24 @@ export default function RatingForm({ hotelPlaceId }: RatingFormProps) {
           </button>
         ))}
       </div>
+
+      <textarea
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder="¿Quieres dejar un comentario? (opcional)"
+        className="w-full border rounded p-2 text-sm text-gray-700 mb-2"
+        rows={4}
+        disabled={submitting}
+      />
+
       <button
         onClick={handleSubmit}
         disabled={submitting}
         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded text-sm"
       >
-        {submitting ? "Enviando..." : "Enviar calificación"}
+        {submitting ? "Enviando..." : "Enviar reseña"}
       </button>
+
       {message && (
         <p className="mt-2 text-sm text-gray-700">
           {message}

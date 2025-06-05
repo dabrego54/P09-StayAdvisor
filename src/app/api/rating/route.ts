@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     const userId = payload.id;
-    const { hotelPlaceId, rating } = await req.json();
+    const { hotelPlaceId, rating, comment } = await req.json();
 
     if (!hotelPlaceId || typeof rating !== 'number') {
       return NextResponse.json({ error: 'Datos inválidos' }, { status: 400 });
@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
       userId,
       hotelPlaceId,
       rating,
+      comment: comment || null,
       createdAt: new Date(),
     });
 
