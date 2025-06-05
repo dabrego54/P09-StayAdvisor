@@ -2,29 +2,47 @@
 // revisar el cambio
 
 import type { Hotel } from '@/types/Hotel';
+import type { HotelReal } from '@/types/HotelReal';
 
-  interface FilterCriteria {
-    experience?: string;
-    services?: string[];
-    searchText?: string;
-  }
-  
-  export function filterHotels(hotels: Hotel[], filters: FilterCriteria): Hotel[] {
-    return hotels.filter(hotel => {
-      const matchExperience = filters.experience
-        ? hotel.experience === filters.experience
+interface FilterCriteria {
+  experience?: string;
+  services?: string[];
+  searchText?: string;
+}
+
+/**
+ * Permite filtrar tanto hoteles locales (Hotel) como reales (HotelReal).
+ */
+export function filterHotels(
+  hotels: (Hotel | HotelReal)[],
+  filters: FilterCriteria
+): (Hotel | HotelReal)[] {
+  return hotels.filter(hotel => {
+    // Experiencia (puede no existir en HotelReal)
+    const matchExperience = filters.experience
+      ? (hotel as any).experience === filters.experience
+      : true;
+
+    // Servicios (puede no existir en HotelReal)
+    const matchServices =
+      filters.services && filters.services.length > 0
+        ? Array.isArray((hotel as any).services) &&
+          filters.services.every(s => (hotel as any).services.includes(s))
         : true;
-  
-      const matchServices = filters.services && filters.services.length > 0
-        ? filters.services.every(s => hotel.services.includes(s))
-        : true;
-  
-      const matchSearch = filters.searchText
-        ? [hotel.name, hotel.location, hotel.experience]
-            .some(field => field.toLowerCase().includes(filters.searchText!.toLowerCase()))
-        : true;
-  
-      return matchExperience && matchServices && matchSearch;
-    });
-  }
-  
+
+    // Búsqueda por texto (usa name, address/location, experience si existen)
+    const searchFields = [
+      (hotel as any).name,
+      (hotel as any).address || (hotel as any).location,
+      (hotel as any).experience,
+    ].filter(Boolean);
+
+    const matchSearch = filters.searchText
+      ? searchFields.some(field =>
+          String(field).toLowerCase().includes(filters.searchText!.toLowerCase())
+        )
+      : true;
+
+    return matchExperience && matchServices && matchSearch;
+  });
+}

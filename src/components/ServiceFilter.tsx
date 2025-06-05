@@ -5,10 +5,10 @@ import React, { useState, useRef, useEffect } from 'react';
 interface ServiceFilterProps {
   selectedServices: string[];
   onChange: (service: string) => void;
-  options: string[];
+  services: string[];
 }
 
-const ServiceFilter: React.FC<ServiceFilterProps> = ({ selectedServices, onChange, options }) => {
+const ServiceFilter: React.FC<ServiceFilterProps> = ({ selectedServices, onChange, services }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +42,7 @@ const ServiceFilter: React.FC<ServiceFilterProps> = ({ selectedServices, onChang
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
         }`}
       >
-        {options.map(service => (
+        {services.map(service => (
           <label key={service} className="flex items-center space-x-2">
             <input
               type="checkbox"
