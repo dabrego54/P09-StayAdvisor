@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ReviewList from './ReviewList';
 import type { HotelReal } from '@/types/HotelReal';
 
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export default function HotelCard({ hotel, apiKey, ranking }: Props) {
+  const router = useRouter();
   const [showReviews, setShowReviews] = useState(false);
 
   const photoUrl = hotel.photoReference
@@ -55,6 +57,25 @@ export default function HotelCard({ hotel, apiKey, ranking }: Props) {
         </span>
       </div>
       {showReviews && hotel.placeId && <ReviewList placeId={hotel.placeId} />}
+      <button
+        className="mt-4 bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition"
+        onClick={() => {
+          // Guarda los datos relevantes en localStorage
+          localStorage.setItem('reservaHotel', JSON.stringify({
+            name: hotel.name,
+            address: hotel.address,
+            rating: hotel.rating,
+            placeId: hotel.placeId,
+            photoReference: hotel.photoReference || null,
+            price: hotel.price || null,
+            // Agrega aquí otros campos relevantes si los tienes
+          }));
+          // Redirige a /reserva
+          router.push('/reserva');
+        }}
+      >
+        Reservar
+      </button>
     </div>
   );
 }
