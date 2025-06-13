@@ -1,17 +1,12 @@
-import type { Hotel } from '@/types/Hotel';
 import type { HotelReal } from '@/types/HotelReal';
 
 /**
- * Filtra hoteles por ciudad (ubicación).
- * Busca la ciudad dentro del campo address o location.
+ * Filtra hoteles por ciudad comparando con el campo `address`.
  */
-export function filterByCity(
-  hotels: (Hotel | HotelReal)[],
-  city: string
-): (Hotel | HotelReal)[] {
+export function filterByCity(hotels: HotelReal[], city: string): HotelReal[] {
   if (!city) return hotels;
-  return hotels.filter(hotel => {
-    const address = (hotel as any).address || (hotel as any).location || '';
-    return address.toLowerCase().includes(city.toLowerCase());
-  });
+
+  return hotels.filter(hotel =>
+    hotel.address.toLowerCase().includes(city.toLowerCase())
+  );
 }

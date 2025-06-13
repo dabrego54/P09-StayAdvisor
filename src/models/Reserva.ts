@@ -1,13 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface Reserva extends Document {
-  hotel: {
-    name: string;
-    address: string;
-    placeId: string;
-    price?: number;
-    photoReference?: string;
-  };
+  hotel: any; // Acepta objetos tipo HotelReal u Hotel
   user: {
     nombre: string;
     email: string;
@@ -20,11 +14,8 @@ export interface Reserva extends Document {
 
 const ReservaSchema = new Schema<Reserva>({
   hotel: {
-    name: String,
-    address: String,
-    placeId: String,
-    price: Number,
-    photoReference: String,
+    type: Schema.Types.Mixed, // <-- permite guardar cualquier estructura de hotel
+    required: true
   },
   user: {
     nombre: String,

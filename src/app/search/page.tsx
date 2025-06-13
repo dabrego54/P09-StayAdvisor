@@ -5,10 +5,10 @@ import ExperienceSelector from '@/components/ExperienceSelector';
 import ServiceFilter from '@/components/ServiceFilter';
 import { filterHotels } from '@/utils/filterHotels';
 import HotelCard from '@/components/HotelCard';
-import type { Hotel } from '@/types/Hotel';
+import type { HotelReal } from '@/types/HotelReal';
 import Link from 'next/link';
 import Header from '@/components/header';
-import  fetchRealHotels from '@/utils/fetchRealHotels';
+import fetchRealHotels from '@/utils/fetchRealHotels';
 import { filterByCity } from '@/utils/filterByCity';
 
 export default function SearchPage() {
@@ -16,14 +16,14 @@ export default function SearchPage() {
   const [searchText, setSearchText] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [services, setServices] = useState<string[]>([
-    "WiFi", "Desayuno", "Piscina", "Estacionamiento", "Gimnasio"
+  const [services] = useState<string[]>([
+    'WiFi', 'Desayuno', 'Piscina', 'Estacionamiento', 'Gimnasio',
   ]);
-  const [hotels, setHotels] = useState<HotelReal[]>([]);
-  const [experienceOptions, setExperienceOptions] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true); // 🔵 Agregado para manejar carga
+  const [hotels, setHotels] = useState<HotelReal[]>([] as HotelReal[]);
+  const [experienceOptions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
   const [sortByRating, setSortByRating] = useState(false);
-  const [selectedCity, setSelectedCity] = useState<string>(''); // Estado para la ciudad
+  const [selectedCity, setSelectedCity] = useState<string>('');
 
   const handleExperienceSelect = (experience: string) => {
     setSelectedExperience(experience);
@@ -40,7 +40,7 @@ export default function SearchPage() {
   const handleResetFilters = () => {
     setSelectedExperience('');
     setSelectedServices([]);
-    setSelectedCity(''); // Reinicia la ciudad al limpiar filtros
+    setSelectedCity('');
   };
 
   const handleServiceToggle = (service: string) => {
@@ -53,38 +53,42 @@ export default function SearchPage() {
     const delayDebounce = setTimeout(async () => {
       setLoading(true);
       const query = searchText.trim().length >= 2 ? searchText : 'Hotel';
-      console.log('🌎 Buscando hoteles con query:', query);
 
-      const hoteles = await fetchRealHotels(query);
-      setHotels(hoteles);
+      console.log('🔍 Query enviada:', query);
+
+      const fetched = await fetchRealHotels(query);
+      console.log('🛰️ Datos recibidos desde fetchRealHotels:', fetched);
+      console.log('📏 Cantidad de hoteles:', fetched.length);
+      console.log('🧪 Primer hotel:', fetched[0]);
+
+      setHotels(fetched); // <- aquí puede estar llegando []
       setLoading(false);
     }, 600);
 
     return () => clearTimeout(delayDebounce);
   }, [searchText]);
 
-  // Ordena los hoteles según el toggle
+
+
+  // Ordenar por mejor calificación
   const sortedHotels = [...hotels].sort((a, b) => {
-    if (!sortByRating) return 0; // Orden normal
-    // Primero por rating descendente, luego por cantidad de reseñas descendente
+    if (!sortByRating) return 0;
     if (b.rating !== a.rating) return b.rating - a.rating;
     return (b.totalRatings || 0) - (a.totalRatings || 0);
   });
 
-  // Aplica los filtros antes de renderizar la lista:
-  const filteredByCity = filterByCity(hotels, selectedCity);
-  const filteredHotels = filterHotels(filteredByCity, {
-    experience: selectedExperience,
-    services: selectedServices,
-    searchText,
-  });
+  const filteredHotels = sortedHotels;
 
-  // 🔧 Mostramos igual la interfaz aunque esté cargando
+  <pre className="text-xs bg-gray-100 p-4 rounded max-h-96 overflow-auto">
+    {JSON.stringify(filteredHotels, null, 2)}
+  </pre>
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col">
       <Header />
 
-      {/* Barra de búsqueda */}
+      {/* Búsqueda principal */}
       <div className="w-full px-4 sm:px-6 max-w-2xl bg-white rounded-2xl shadow-xl p-6 sm:p-8 m-auto mt-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
           Buscar Hoteles Boutique
@@ -128,8 +132,9 @@ export default function SearchPage() {
             {sortByRating ? 'Ordenar por defecto' : 'Ordenar por mejor calificación'}
           </button>
         </div>
-
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          
           {filteredHotels.length > 0 ? (
             filteredHotels.map((hotel, idx) => (
               <HotelCard
@@ -145,40 +150,35 @@ export default function SearchPage() {
         </div>
       </div>
 
+      {/* Sidebar de filtros */}
       {isSidebarOpen && (
-  <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-lg p-6 z-50">
-    <button
-      onClick={() => setIsSidebarOpen(false)}
-      className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
-      aria-label="Cerrar filtros"
-    >
-      ✕
-    </button>
-    <h3 className="text-lg font-bold mb-4">Filtros</h3>
-    <ExperienceSelector
-      selected={selectedExperience}
-      onSelect={setSelectedExperience}
-      options={experienceOptions}
-    />
-    <ServiceFilter
-      selectedServices={selectedServices}
-      onChange={service => {
-        setSelectedServices(prev =>
-          prev.includes(service)
-            ? prev.filter(s => s !== service)
-            : [...prev, service]
-        );
-      }}
-      services={services}
-    />
-    <button
-      onClick={handleResetFilters}
-      className="mt-6 w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 rounded"
-    >
-      Limpiar filtros
-    </button>
-  </div>
-)}
+        <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-lg p-6 z-50">
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+            aria-label="Cerrar filtros"
+          >
+            ✕
+          </button>
+          <h3 className="text-lg font-bold mb-4">Filtros</h3>
+          <ExperienceSelector
+            selected={selectedExperience}
+            onSelect={setSelectedExperience}
+            options={experienceOptions}
+          />
+          <ServiceFilter
+            selectedServices={selectedServices}
+            onChange={handleServiceToggle}
+            services={services}
+          />
+          <button
+            onClick={handleResetFilters}
+            className="mt-6 w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 rounded"
+          >
+            Limpiar filtros
+          </button>
+        </div>
+      )}
     </div>
   );
 }
