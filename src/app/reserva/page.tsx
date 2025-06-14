@@ -116,3 +116,5 @@ export default function ReservaPage() {
     </div>
   );
 }
+
+// se me olvido hacer el commit pero ya quedó listo la corrección, ahora falta volver a implementar las funcionalidades de los sprint 9 y 10, yluego continuar con el 11.
