@@ -5,19 +5,22 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import BookingForm, { BookingData } from '@/components/BookingForm';
 import type { HotelReal } from '@/types/HotelReal';
-import { useAuth } from '@/context/AuthContext'; // Comenta si no estás usando contexto
+import { useAuth } from '@/context/AuthContext';
 
 export default function ReservaPage() {
   const [formData, setFormData] = useState<BookingData | null>(null);
   const [hotelSeleccionado, setHotelSeleccionado] = useState<HotelReal | null>(null);
   const router = useRouter();
-  const { user } = useAuth(); // Comenta si no estás usando contexto
+  const { user } = useAuth();
 
-  // Cargar hotel desde localStorage
   useEffect(() => {
-    const storedHotel = localStorage.getItem('hotelSeleccionado');
-    if (storedHotel) {
-      setHotelSeleccionado(JSON.parse(storedHotel));
+    try {
+      const storedHotel = localStorage.getItem('hotelSeleccionado');
+      if (storedHotel) {
+        setHotelSeleccionado(JSON.parse(storedHotel));
+      }
+    } catch (error) {
+      console.error('Error al recuperar hotel:', error);
     }
   }, []);
 
@@ -27,6 +30,30 @@ export default function ReservaPage() {
       return;
     }
 
+    // Validar disponibilidad
+    try {
+      const checkResponse = await fetch('/api/reservas/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          hotelPlaceId: hotelSeleccionado.placeId,
+          checkIn: formData.checkIn,
+          checkOut: formData.checkOut
+        })
+      });
+
+      const checkData = await checkResponse.json();
+      if (!checkData.disponible) {
+        toast.error('El hotel ya está reservado en esas fechas.');
+        return;
+      }
+    } catch (err) {
+      console.error('Error al verificar disponibilidad:', err);
+      toast.error('No se pudo verificar disponibilidad. Intenta de nuevo.');
+      return;
+    }
+
+    // Proceder a guardar
     const reservaPayload = {
       hotelName: hotelSeleccionado.name,
       hotelPlaceId: hotelSeleccionado.placeId,
@@ -34,7 +61,7 @@ export default function ReservaPage() {
       checkIn: formData.checkIn,
       checkOut: formData.checkOut,
       guests: formData.guests,
-      contactName: formData.fullName,  // ← aquí corregimos
+      contactName: formData.fullName,
       contactPhone: formData.phone,
       contactEmail: formData.email,
       notes: formData.notes ?? '',

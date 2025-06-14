@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner'; 
 import type { BookingData } from '@/components/BookingForm';
-import type { Hotel } from '@/types/Hotel';
+import type { HotelReal } from '@/types/HotelReal';
+import BookingSummary from '@/components/BookingSummary';
 
 export default function ConfirmacionPage() {
-  const [hotel, setHotel] = useState<Hotel | null>(null);
+  const [hotel, setHotel] = useState<HotelReal | null>(null);
   const [reserva, setReserva] = useState<BookingData | null>(null);
   const [reservationId, setReservationId] = useState<number | null>(null);
 
@@ -33,16 +34,6 @@ export default function ConfirmacionPage() {
     );
   }
 
-  const getNightCount = (start: string, end: string) => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    const diff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    return diff > 0 ? diff : 0;
-  };
-
-  const nights = getNightCount(reserva.checkIn, reserva.checkOut);
-  const total = nights * hotel.price;
-
   return (
     <div className="min-h-screen bg-white py-8 sm:py-10 px-4 sm:px-6 max-w-2xl mx-auto">
       <h1 className="text-2xl sm:text-3xl font-bold text-center text-green-700 mb-2">✅ Reserva Confirmada</h1>
@@ -50,18 +41,11 @@ export default function ConfirmacionPage() {
         <p className="text-sm text-center text-gray-500 mb-6">Código de reserva: #{reservationId}</p>
       )}
 
-      <div className="bg-gray-100 p-6 sm:p-8 rounded-xl shadow space-y-4 text-gray-800 text-sm sm:text-base">
-        <p><strong>Hotel:</strong> {hotel.name} ({hotel.location})</p>
-        <p><strong>Experiencia:</strong> {hotel.experience}</p>
-        <p><strong>Fechas:</strong> {reserva.checkIn} a {reserva.checkOut} ({nights} noches)</p>
-        <p><strong>Huéspedes:</strong> {reserva.guests}</p>
-        <p><strong>Nombre:</strong> {reserva.fullName}</p>
-        <p><strong>Email:</strong> {reserva.email}</p>
-        {reserva.phone && <p><strong>Teléfono:</strong> {reserva.phone}</p>}
-        {reserva.notes && <p><strong>Comentarios:</strong> {reserva.notes}</p>}
-        <p><strong>Servicios incluidos:</strong> {hotel.services.join(', ')}</p>
-        <p className="text-lg font-semibold">Total estimado: ${total}</p>
-      </div>
+      <BookingSummary
+        hotel={hotel}
+        data={reserva}
+        apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY!}
+      />
 
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
         <a

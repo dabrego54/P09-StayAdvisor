@@ -1,14 +1,15 @@
 'use client';
 
 import type { BookingData } from './BookingForm';
-import type { Hotel } from '@/types/Hotel';
+import type { HotelReal } from '@/types/HotelReal';
 
 interface BookingSummaryProps {
-  hotel: Hotel | null;
+  hotel: HotelReal | null;
   data: BookingData | null;
+  apiKey: string;
 }
 
-export default function BookingSummary({ hotel, data }: BookingSummaryProps) {
+export default function BookingSummary({ hotel, data, apiKey }: BookingSummaryProps) {
   if (!hotel || !data) return null;
 
   const getNightCount = (start: string, end: string) => {
@@ -19,7 +20,11 @@ export default function BookingSummary({ hotel, data }: BookingSummaryProps) {
   };
 
   const nights = getNightCount(data.checkIn, data.checkOut);
-  const estimatedPrice = nights * hotel.price;
+  const estimatedPrice = nights * 100; // 💡 puedes ajustar este valor si luego traes `price` real
+
+  const photoUrl = hotel.photoReference
+    ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${hotel.photoReference}&key=${apiKey}`
+    : '/default-hotel.jpg';
 
   return (
     <div className="w-full max-w-2xl mx-auto bg-white shadow-md rounded-2xl p-6 sm:p-8 mt-8">
@@ -27,14 +32,21 @@ export default function BookingSummary({ hotel, data }: BookingSummaryProps) {
         Resumen de Reserva
       </h2>
 
+      <div className="relative w-full h-48 sm:h-60 rounded-md overflow-hidden mb-6">
+        <img src={photoUrl} alt={hotel.name} className="w-full h-full object-cover" />
+      </div>
+
       <ul className="space-y-3 text-gray-700 text-sm sm:text-base">
-        <li><strong>Hotel:</strong> {hotel.name} ({hotel.location})</li>
-        <li><strong>Experiencia:</strong> {hotel.experience}</li>
+        <li><strong>Hotel:</strong> {hotel.name}</li>
+        <li><strong>Dirección:</strong> {hotel.address}</li>
         <li><strong>Fechas:</strong> {data.checkIn} → {data.checkOut} ({nights} noches)</li>
         <li><strong>Huéspedes:</strong> {data.guests}</li>
-        <li><strong>Servicios incluidos:</strong> {hotel.services.join(', ')}</li>
+        <li><strong>Email:</strong> {data.email}</li>
+        {data.phone && <li><strong>Teléfono:</strong> {data.phone}</li>}
+        {data.notes && <li><strong>Comentarios:</strong> {data.notes}</li>}
+        <li><strong>Servicios incluidos:</strong> Desayuno, Wifi, Toallas</li>
         <li className="text-lg font-semibold text-green-700">
-          Precio estimado: ${estimatedPrice}
+          Total estimado: ${estimatedPrice}
         </li>
       </ul>
     </div>
