@@ -1,35 +1,59 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { toast } from 'sonner'; 
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import BookingForm, { BookingData } from '@/components/BookingForm';
-import hotelsJson from '@/data/hotels.json';
-import type { Hotel } from '@/types/Hotel';
+import type { HotelReal } from '@/types/HotelReal';
+import { useAuth } from '@/context/AuthContext'; // Comenta si no estás usando contexto
 
 export default function ReservaPage() {
   const [formData, setFormData] = useState<BookingData | null>(null);
-  const searchParams = useSearchParams();
-  const hotelId = searchParams.get('hotelId');
-  const hotelSeleccionado: Hotel | null = hotelsJson.find(h => h.id === Number(hotelId)) ?? null;
-
+  const [hotelSeleccionado, setHotelSeleccionado] = useState<HotelReal | null>(null);
   const router = useRouter();
+  const { user } = useAuth(); // Comenta si no estás usando contexto
 
-  const handleReserva = () => {
+  // Cargar hotel desde localStorage
+  useEffect(() => {
+    const storedHotel = localStorage.getItem('hotelSeleccionado');
+    if (storedHotel) {
+      setHotelSeleccionado(JSON.parse(storedHotel));
+    }
+  }, []);
+
+  const handleReserva = async () => {
     if (!hotelSeleccionado || !formData) {
       toast.error('Por favor completa todos los datos antes de confirmar.');
       return;
     }
 
+    const reservaPayload = {
+      hotelName: hotelSeleccionado.name,
+      hotelPlaceId: hotelSeleccionado.placeId,
+      userEmail: user?.email || formData.email,
+      checkIn: formData.checkIn,
+      checkOut: formData.checkOut,
+      guests: formData.guests,
+      contactName: formData.fullName,  // ← aquí corregimos
+      contactPhone: formData.phone,
+      contactEmail: formData.email,
+      notes: formData.notes ?? '',
+    };
+
     try {
-      localStorage.setItem('hotelSeleccionado', JSON.stringify(hotelSeleccionado));
+      const response = await fetch('/api/reservas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reservaPayload),
+      });
+
+      if (!response.ok) throw new Error('Fallo al guardar reserva');
+
       localStorage.setItem('reservaConfirmada', JSON.stringify(formData));
       toast.success('Reserva confirmada exitosamente.');
-      setTimeout(() => {
-        router.push('/confirmacion');
-      }, 500);
+      setTimeout(() => router.push('/confirmacion'), 500);
     } catch (error) {
-      console.error('Error al guardar reserva:', error);
+      console.error('Error al confirmar reserva:', error);
       toast.error('Ocurrió un error al confirmar la reserva.');
     }
   };
@@ -43,8 +67,8 @@ export default function ReservaPage() {
       {hotelSeleccionado && (
         <div className="mb-6 text-center text-gray-700 px-2">
           <h2 className="text-lg sm:text-xl font-semibold">Hotel seleccionado:</h2>
-          <p className="text-base sm:text-lg">{hotelSeleccionado.name} – {hotelSeleccionado.location}</p>
-          <p className="text-sm text-gray-500 italic">{hotelSeleccionado.experience}</p>
+          <p className="text-base sm:text-lg">{hotelSeleccionado.name}</p>
+          <p className="text-sm text-gray-500 italic">{hotelSeleccionado.address}</p>
         </div>
       )}
 

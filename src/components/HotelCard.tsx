@@ -1,20 +1,29 @@
+'use client';
+
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ReviewList from './ReviewList';
 import type { HotelReal } from '@/types/HotelReal';
 
 type Props = {
   hotel: HotelReal;
   apiKey: string;
-  ranking?: number; // Nueva prop opcional
+  ranking?: number;
 };
 
 export default function HotelCard({ hotel, apiKey, ranking }: Props) {
   const [showReviews, setShowReviews] = useState(false);
+  const router = useRouter();
 
   const photoUrl = hotel.photoReference
     ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${hotel.photoReference}&key=${apiKey}`
     : '/default-hotel.jpg';
+
+  const handleReservar = () => {
+    localStorage.setItem('hotelSeleccionado', JSON.stringify(hotel));
+    router.push('/reserva');
+  };
 
   return (
     <div className="border rounded-lg shadow-md p-6 bg-white hover:shadow-lg transition flex flex-col relative">
@@ -24,6 +33,7 @@ export default function HotelCard({ hotel, apiKey, ranking }: Props) {
           #{ranking}
         </div>
       )}
+
       <div className="relative w-full h-40 rounded-md overflow-hidden mb-3">
         <Image
           src={photoUrl}
@@ -33,28 +43,38 @@ export default function HotelCard({ hotel, apiKey, ranking }: Props) {
           className="rounded-md"
         />
       </div>
+
       <h3 className="text-xl font-bold text-blue-800 mb-2">{hotel.name}</h3>
+
       <p className="text-gray-600 mb-1">
         <span className="font-semibold">Ubicación:</span> {hotel.address}
       </p>
-      <p className="text-gray-600 mb-1">
-        <span className="font-semibold">Experiencia:</span> {hotel.experience}
-      </p>
-      <p className="text-gray-800 font-semibold mb-4">
-        <span className="text-blue-600">$</span> {hotel.price} por noche
-      </p>
-      <div className="flex items-center justify-between mt-auto pt-2">
+
+      <div className="text-sm text-gray-500 italic mb-2">
+        ⭐ {hotel.rating?.toFixed(1) || '4.5'} / 5.0
+      </div>
+
+      <div className="flex justify-between items-center mt-auto pt-2">
         <button
+          onClick={handleReservar}
           className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition"
+        >
+          Reservar
+        </button>
+
+        <button
           onClick={() => setShowReviews((v) => !v)}
+          className="text-sm text-blue-600 hover:underline ml-4"
         >
           {showReviews ? 'Ocultar reseñas' : 'Ver reseñas'}
         </button>
-        <span className="text-yellow-500 font-semibold ml-4">
-          ⭐ {hotel.rating?.toFixed(1) || '4.5'} / 5.0
-        </span>
       </div>
-      {showReviews && hotel.placeId && <ReviewList placeId={hotel.placeId} />}
+
+      {showReviews && hotel.placeId && (
+        <div className="mt-4">
+          <ReviewList placeId={hotel.placeId} />
+        </div>
+      )}
     </div>
   );
 }

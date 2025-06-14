@@ -6,6 +6,7 @@ import ServiceFilter from '@/components/ServiceFilter';
 import { filterHotels } from '@/utils/filterHotels';
 import HotelCard from '@/components/HotelCard';
 import type { Hotel } from '@/types/Hotel';
+import type { HotelReal } from '@/types/HotelReal';
 import Link from 'next/link';
 import Header from '@/components/header';
 import  fetchRealHotels from '@/utils/fetchRealHotels';
