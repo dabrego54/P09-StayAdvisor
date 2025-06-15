@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner'; 
+import { toast } from 'sonner';
 import type { BookingData } from '@/components/BookingForm';
 import type { HotelReal } from '@/types/HotelReal';
 import BookingSummary from '@/components/BookingSummary';
+import RatingForm from '@/components/RatingForm';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ConfirmacionPage() {
+  const { user } = useAuth();
   const [hotel, setHotel] = useState<HotelReal | null>(null);
   const [reserva, setReserva] = useState<BookingData | null>(null);
   const [reservationId, setReservationId] = useState<number | null>(null);
@@ -29,7 +32,9 @@ export default function ConfirmacionPage() {
       <div className="min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6">
         <h2 className="text-2xl sm:text-3xl font-semibold text-gray-700 mb-2">No hay datos de reserva</h2>
         <p className="text-gray-500 mb-4">Por favor, realiza una reserva antes de acceder a esta página.</p>
-        <a href="/reserva" className="text-blue-600 underline hover:text-blue-800 text-sm sm:text-base">Volver a reservar</a>
+        <a href="/reserva" className="text-blue-600 underline hover:text-blue-800 text-sm sm:text-base">
+          Volver a reservar
+        </a>
       </div>
     );
   }
@@ -62,6 +67,16 @@ export default function ConfirmacionPage() {
           🖨 Imprimir resumen
         </button>
       </div>
+
+      {/* Formulario de calificación visible tras confirmar reserva */}
+      {user?.id && hotel?.placeId && (
+        <div className="mt-10 border-t pt-6">
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 text-center">
+            ¿Qué te pareció el hotel?
+          </h2>
+          <RatingForm hotelPlaceId={hotel.placeId} />
+        </div>
+      )}
     </div>
   );
 }

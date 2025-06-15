@@ -4,6 +4,10 @@ const reservaSchema = new Schema({
   hotelName: String,
   hotelPlaceId: String,
   userEmail: String,
+  userId: {
+    type: mongoose.Types.ObjectId,
+    required: true,
+  },
   checkIn: String,
   checkOut: String,
   guests: Number,

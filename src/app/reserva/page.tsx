@@ -58,6 +58,7 @@ export default function ReservaPage() {
       hotelName: hotelSeleccionado.name,
       hotelPlaceId: hotelSeleccionado.placeId,
       userEmail: user?.email || formData.email,
+      userId: user?.id,
       checkIn: formData.checkIn,
       checkOut: formData.checkOut,
       guests: formData.guests,

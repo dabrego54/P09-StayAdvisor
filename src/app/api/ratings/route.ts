@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import RatingInterno from '@/models/RatingInterno';
-import mongoose from 'mongoose'; // ✅ Necesario para usar ObjectId
+import Reserva from '@/models/Reserva'; // Asegúrate de tener este modelo
+import mongoose from 'mongoose';
 
 export async function POST(req: NextRequest) {
   await connectDB();
@@ -14,7 +15,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Faltan campos obligatorios' }, { status: 400 });
     }
 
-    const objectId = new mongoose.Types.ObjectId(userId); // ✅ transformación clave
+    const objectId = new mongoose.Types.ObjectId(userId);
+
+    // ✅ Validar que exista una reserva previa
+    const existingReserva = await Reserva.findOne({
+      userId: objectId,
+      hotelPlaceId,
+    });
+
+    if (!existingReserva) {
+      return NextResponse.json(
+        { message: 'Debes haber reservado este hotel para poder calificar.' },
+        { status: 403 }
+      );
+    }
 
     const nuevoRating = new RatingInterno({
       hotelPlaceId,

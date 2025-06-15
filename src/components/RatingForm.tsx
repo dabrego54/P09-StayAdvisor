@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 
@@ -14,6 +14,39 @@ export default function RatingForm({ hotelPlaceId }: Props) {
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState('');
   const [enviado, setEnviado] = useState(false);
+
+  const [hasReservation, setHasReservation] = useState(false);
+  const [loadingCheck, setLoadingCheck] = useState(true);
+
+  useEffect(() => {
+    const checkReservation = async () => {
+      if (!user?.id || !hotelPlaceId) return;
+
+      try {
+        const res = await fetch('/api/reservas/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user.id, hotelPlaceId }),
+        });
+
+        const data = await res.json();
+
+        console.log('🟢 Verificando reserva para:', {
+          userId: user.id,
+          hotelPlaceId,
+        });
+        console.log('🟢 Respuesta de backend:', data);
+
+        setHasReservation(data.hasReservation);
+      } catch (error) {
+        console.error('❌ Error al verificar reserva:', error);
+      } finally {
+        setLoadingCheck(false);
+      }
+    };
+
+    checkReservation();
+  }, [user, hotelPlaceId]);
 
   const handleSubmit = async () => {
     if (!user?.id) {
@@ -38,6 +71,11 @@ export default function RatingForm({ hotelPlaceId }: Props) {
         }),
       });
 
+      if (response.status === 403) {
+        toast.error('Solo puedes calificar si hiciste una reserva en este hotel.');
+        return;
+      }
+
       if (response.status === 409) {
         toast.warning('Ya calificaste este hotel.');
         setEnviado(true);
@@ -53,8 +91,23 @@ export default function RatingForm({ hotelPlaceId }: Props) {
     }
   };
 
-  if (!user) return null;
-  if (enviado) return <p className="text-green-600 mt-4">✔️ ¡Gracias por tu calificación!</p>;
+  // 🔍 Logs de estado
+  console.log('🧪 user:', user);
+  console.log('🧪 loadingCheck:', loadingCheck);
+  console.log('🧪 hasReservation:', hasReservation);
+
+  if (!user || loadingCheck) return null;
+  if (!hasReservation) {
+    return (
+      <p className="text-sm text-gray-500 mt-2">
+        Solo puedes calificar si ya reservaste este hotel.
+      </p>
+    );
+  }
+
+  if (enviado) {
+    return <p className="text-green-600 mt-4">✔️ ¡Gracias por tu calificación!</p>;
+  }
 
   return (
     <div className="mt-4 border-t pt-4">
