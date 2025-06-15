@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ReviewList from './ReviewList';
 import type { HotelReal } from '@/types/HotelReal';
+import RatingForm from './RatingForm';
 
 type Props = {
   hotel: HotelReal;
@@ -73,7 +74,9 @@ export default function HotelCard({ hotel, apiKey, ranking }: Props) {
       {showReviews && hotel.placeId && (
         <div className="mt-4">
           <ReviewList placeId={hotel.placeId} />
+          <RatingForm hotelPlaceId={hotel.placeId} />
         </div>
+        
       )}
     </div>
   );
