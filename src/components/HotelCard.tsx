@@ -55,6 +55,18 @@ export default function HotelCard({ hotel, apiKey, ranking }: Props) {
         ⭐ {hotel.rating?.toFixed(1) || '4.5'} / 5.0
       </div>
 
+      {hotel.combinedRating && (
+        <div className="text-sm text-green-700 font-medium mb-1">
+          Ranking combinado: ⭐ {hotel.combinedRating.toFixed(2)}
+        </div>
+      )}
+
+      {hotel.internalRatingCount && hotel.internalRatingAvg && (
+        <div className="text-xs text-gray-500 italic mb-2">
+          {hotel.internalRatingCount} calificaciones de usuarios StayAdvisor (⭐ {hotel.internalRatingAvg.toFixed(2)})
+        </div>
+      )}
+
       <div className="flex justify-between items-center mt-auto pt-2">
         <button
           onClick={handleReservar}

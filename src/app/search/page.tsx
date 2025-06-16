@@ -60,11 +60,13 @@ export default function SearchPage() {
 
   // Ordena los hoteles según el toggle
   const sortedHotels = [...hotels].sort((a, b) => {
-    if (!sortByRating) return 0; // Orden normal
-    // Primero por rating descendente, luego por cantidad de reseñas descendente
-    if (b.rating !== a.rating) return b.rating - a.rating;
-    return (b.totalRatings || 0) - (a.totalRatings || 0);
+    if (!sortByRating) return 0;
+    // 🟢 Ordenar por combinedRating si existe, fallback a rating
+      const ratingA = a.combinedRating ?? a.rating ?? 0;
+      const ratingB = b.combinedRating ?? b.rating ?? 0;
+      return ratingB - ratingA;
   });
+
 
   // 🔧 Mostramos igual la interfaz aunque esté cargando
   return (

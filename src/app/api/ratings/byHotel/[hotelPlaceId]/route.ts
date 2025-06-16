@@ -3,14 +3,17 @@ import RatingInterno from '@/models/RatingInterno';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { hotelPlaceId: string } }
+    req: NextRequest,
+    context: { params: {  hotelPlaceId: string } }
 ) {
   await connectDB();
 
+  const getParams = async () => context.params;
+  const { hotelPlaceId } = await getParams();
+
   try {
     const ratings = await RatingInterno.find({
-      hotelPlaceId: params.hotelPlaceId,
+      hotelPlaceId
     });
 
     return NextResponse.json(ratings);

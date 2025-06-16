@@ -7,7 +7,7 @@ export type Hotel = {
   services: string[];
 };
 
-export type HotelReal = {
+export interface HotelReal {
   name: string;
   address: string;
   rating: number;
@@ -18,4 +18,10 @@ export type HotelReal = {
     lng: number;
   };
   photoReference: string | null;
-};
+
+  combinedRating?: number;
+
+  // 🔹 Nuevos campos opcionales
+  internalRatingAvg?: number;
+  internalRatingCount?: number;
+}
