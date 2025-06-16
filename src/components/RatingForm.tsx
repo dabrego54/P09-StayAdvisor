@@ -30,16 +30,12 @@ export default function RatingForm({ hotelPlaceId }: Props) {
         });
 
         const data = await res.json();
-
-        console.log('🟢 Verificando reserva para:', {
-          userId: user.id,
-          hotelPlaceId,
-        });
-        console.log('🟢 Respuesta de backend:', data);
-
         setHasReservation(data.hasReservation);
       } catch (error) {
-        console.error('❌ Error al verificar reserva:', error);
+        console.error('Error al verificar reserva:', error);
+        toast.error('Error al verificar reserva.', {
+          description: 'Intenta recargar la página.',
+        });
       } finally {
         setLoadingCheck(false);
       }
@@ -50,12 +46,16 @@ export default function RatingForm({ hotelPlaceId }: Props) {
 
   const handleSubmit = async () => {
     if (!user?.id) {
-      toast.error('Debes iniciar sesión para calificar.');
+      toast.error('Debes iniciar sesión para calificar.', {
+        description: 'Inicia sesión primero para dejar tu opinión.',
+      });
       return;
     }
 
     if (!rating) {
-      toast.error('Selecciona una calificación.');
+      toast.error('Selecciona una calificación.', {
+        description: 'Haz clic en una estrella para asignar tu nota.',
+      });
       return;
     }
 
@@ -72,29 +72,32 @@ export default function RatingForm({ hotelPlaceId }: Props) {
       });
 
       if (response.status === 403) {
-        toast.error('Solo puedes calificar si hiciste una reserva en este hotel.');
+        toast.error('Solo puedes calificar si hiciste una reserva.', {
+          description: 'Haz una reserva antes de dejar tu calificación.',
+        });
         return;
       }
 
       if (response.status === 409) {
-        toast.warning('Ya calificaste este hotel.');
+        toast.warning('Ya calificaste este hotel.', {
+          description: 'Solo puedes enviar una calificación por hotel.',
+        });
         setEnviado(true);
         return;
       }
 
       if (!response.ok) throw new Error();
 
-      toast.success('Calificación enviada con éxito.');
+      toast.success('Calificación enviada con éxito.', {
+        description: 'Gracias por tu opinión, ¡ayudará a otros viajeros!',
+      });
       setEnviado(true);
     } catch {
-      toast.error('Ocurrió un error al enviar tu calificación.');
+      toast.error('Ocurrió un error al enviar tu calificación.', {
+        description: 'Revisa tu conexión o inténtalo nuevamente.',
+      });
     }
   };
-
-  // 🔍 Logs de estado
-  console.log('🧪 user:', user);
-  console.log('🧪 loadingCheck:', loadingCheck);
-  console.log('🧪 hasReservation:', hasReservation);
 
   if (!user || loadingCheck) return null;
   if (!hasReservation) {
@@ -124,6 +127,7 @@ export default function RatingForm({ hotelPlaceId }: Props) {
             className={`text-2xl transition ${
               (hover || rating) >= star ? 'text-yellow-400' : 'text-gray-300'
             }`}
+            aria-label={`Estrella ${star}`}
           >
             ★
           </button>
@@ -136,6 +140,7 @@ export default function RatingForm({ hotelPlaceId }: Props) {
         placeholder="Comentario (opcional)"
         rows={3}
         className="w-full p-3 sm:p-4 border rounded-lg text-base sm:text-[15px] text-gray-800 placeholder-gray-500 mb-3 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        aria-label="Comentario opcional"
       />
 
       <button

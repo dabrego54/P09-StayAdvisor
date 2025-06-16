@@ -5,6 +5,15 @@ import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "sonner";
 import "./globals.css";
 
+<Toaster
+  richColors
+  position="top-center"
+  duration={4000}
+  expand={true}
+  closeButton
+/>
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
