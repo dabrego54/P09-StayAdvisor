@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import RatingInterno from '@/models/RatingInterno';
 import { getCombinedRating } from '@/utils/getCombinedRating';
+import {
+  getCachedHotels,
+  setCachedHotels,
+} from '@/utils/cacheHotelSearch';
 
 export const runtime = 'nodejs';
 
-// Cache in-memory con TTL de 1 hora
-const cache = new Map<string, { data: any; expiresAt: number }>();
-const TTL = 1000 * 60 * 60; // 1 hora
+// TTL desde variable de entorno (default: 1h)
+const TTL = parseInt(process.env.HOTEL_CACHE_TTL_MS || '3600000');
 
 export async function GET(req: NextRequest) {
   const query = new URL(req.url).searchParams.get('query');
@@ -21,13 +24,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'GOOGLE_API_KEY no válida o no definida.' }, { status: 500 });
   }
 
-  const now = Date.now();
-
-  // Revisión de caché
-  const cached = cache.get(query);
-  if (cached && cached.expiresAt > now) {
-    console.log(`⚡ Respuesta desde caché para query: ${query}`);
-    return NextResponse.json(cached.data);
+  // 🧠 Verificar caché antes de llamar a Google
+  const cached = getCachedHotels(query);
+  if (cached) {
+    return NextResponse.json(cached);
   }
 
   try {
@@ -75,12 +75,8 @@ export async function GET(req: NextRequest) {
       })
     );
 
-    cache.set(query, { data: hoteles, expiresAt: now + TTL });
-
-    setTimeout(() => {
-      cache.delete(query);
-      console.log(`🧹 Cache expirada para: ${query}`);
-    }, TTL);
+    // 💾 Guardar en caché
+    setCachedHotels(query, hoteles, TTL);
 
     return NextResponse.json(hoteles);
   } catch (err) {

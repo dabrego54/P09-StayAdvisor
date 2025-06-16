@@ -3,6 +3,7 @@ import { connectDB } from '@/lib/mongodb';
 import RatingInterno from '@/models/RatingInterno';
 import Reserva from '@/models/Reserva'; // Asegúrate de tener este modelo
 import mongoose from 'mongoose';
+import { invalidateHotelCache } from '@/utils/cacheHotelSearch';
 
 export async function POST(req: NextRequest) {
   await connectDB();
@@ -38,6 +39,7 @@ export async function POST(req: NextRequest) {
     });
 
     await nuevoRating.save();
+    invalidateHotelCache(hotelPlaceId);
 
     return NextResponse.json({ message: 'Calificación guardada exitosamente' }, { status: 201 });
   } catch (error: any) {
