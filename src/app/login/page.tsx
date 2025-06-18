@@ -1,9 +1,10 @@
+// /src/app/login/page.tsx
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { toast } from 'sonner'; 
+import { toast } from 'sonner';
 
 export default function LoginPage() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -53,10 +54,14 @@ export default function LoginPage() {
       login(data.user);
 
       toast.success('¡Inicio de sesión exitoso! Bienvenido.');
-      setTimeout(() => {
-        router.push('/search');
-      }, 100);
 
+      setTimeout(() => {
+        if (data.user.role === 'hotelero' || data.user.role === 'admin') {
+          router.push('/dashboard');
+        } else {
+          router.push('/search');
+        }
+      }, 100);
     } catch (err) {
       console.error('Error en el login:', err);
       toast.error('Ocurrió un error inesperado.');

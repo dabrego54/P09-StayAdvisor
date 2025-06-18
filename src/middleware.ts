@@ -1,35 +1,56 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+// /src/middleware.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { jwtVerify } from 'jose';
 
-// Define qué rutas quieres proteger
+const PUBLIC_FILE = /\.(.*)$/;
+const secret = new TextEncoder().encode(process.env.JWT_SECRET); // asegúrate que esté definido
+
 const protectedPaths = ['/search', '/reserva', '/confirmacion'];
+const dashboardPath = '/dashboard';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Solo actuar si es una ruta protegida
-  if (protectedPaths.some(path => pathname.startsWith(path))) {
-    const token = request.cookies.get('token')?.value;
-
-    if (!token) {
-      // No hay token, redirigir a login
-      const loginUrl = new URL('/login', request.url);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    // Si hay token, permitimos el acceso (sin verificar el JWT en el Edge)
+  // Permitir archivos públicos y estáticos
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/favicon.ico') ||
+    PUBLIC_FILE.test(pathname)
+  ) {
     return NextResponse.next();
   }
 
-  // Si no es ruta protegida, continuar normal
-  return NextResponse.next();
-}
+  const token = request.cookies.get('token')?.value;
 
-// Configuración para que Next.js sepa usar este middleware
-export const config = {
-  matcher: [
-    '/search/:path*',
-    '/reserva/:path*',
-    '/confirmacion/:path*',
-  ],
-};
+  // 🔐 Validación general para rutas protegidas (sin decodificar token)
+  if (protectedPaths.some(path => pathname.startsWith(path))) {
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+    return NextResponse.next();
+  }
+
+  // 🔐 Validación específica para /dashboard (requiere rol)
+  if (pathname.startsWith(dashboardPath)) {
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    try {
+      const { payload } = await jwtVerify(token, secret);
+      const role = payload.role;
+
+      if (role === 'hotelero' || role === 'admin') {
+        return NextResponse.next();
+      } else {
+        return NextResponse.redirect(new URL('/login', request.url));
+      }
+    } catch (err) {
+      console.error('Invalid JWT in middleware:', err);
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  }
+
+  return NextResponse.next(); // Para otras rutas no protegidas
+}
