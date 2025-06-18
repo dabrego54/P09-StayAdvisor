@@ -5,7 +5,6 @@ import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
 
-
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_key';
 
 export async function POST(request: Request) {
@@ -36,10 +35,8 @@ export async function POST(request: Request) {
       );
     }
 
-
-    // Crear token JWT
     const token = jwt.sign(
-      { id: user._id.toString(), email: user.email },
+      { id: user._id.toString(), email: user.email, role: user.role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -51,10 +48,9 @@ export async function POST(request: Request) {
       secure: isProduction,
       sameSite: 'strict',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 días en segundos
+      maxAge: 60 * 60 * 24 * 7,
     });
 
-    // Retornar datos básicos para guardar en localStorage
     const response = NextResponse.json(
       {
         success: true,
@@ -63,6 +59,7 @@ export async function POST(request: Request) {
           id: user._id.toString(),
           name: user.name,
           email: user.email,
+          role: user.role,
         },
       },
       { status: 200 }

@@ -6,6 +6,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  role: 'usuario' | 'hotelero' | 'admin';
 }
 
 interface AuthContextType {
@@ -50,7 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem('user');
     } catch (error) {
       console.error('Error cerrando sesión:', error);
-      throw error; 
+      throw error;
     }
   };
 

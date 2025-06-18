@@ -16,6 +16,11 @@ const UserSchema = new Schema(
       type: String,
       required: [true, 'La contraseña es obligatoria'],
     },
+    role: {
+      type: String,
+      enum: ['usuario', 'hotelero', 'admin'],
+      default: 'usuario'
+    },
   },
   {
     timestamps: true,

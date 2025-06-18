@@ -3,16 +3,21 @@ import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
 
-
-
 export async function POST(request: Request) {
   try {
     await connectDB();
-    const { name, email, password } = await request.json();
+    const { name, email, password, role = 'usuario' } = await request.json();
 
     if (!name || !email || !password) {
       return NextResponse.json(
         { message: 'Todos los campos son obligatorios.' },
+        { status: 400 }
+      );
+    }
+
+    if (!['usuario', 'hotelero', 'admin'].includes(role)) {
+      return NextResponse.json(
+        { message: 'Rol inválido.' },
         { status: 400 }
       );
     }
@@ -31,6 +36,7 @@ export async function POST(request: Request) {
       name,
       email,
       password: hashedPassword,
+      role,
     });
 
     await newUser.save();
