@@ -108,7 +108,7 @@ export default function ReservaPage() {
         <div className="max-w-2xl mx-auto w-full mt-8 flex justify-center">
           <button
             onClick={handleReserva}
-            className="w-full sm:w-auto px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 hover:shadow-lg transition-transform transition-shadow duration-300 transform hover:scale-105 active:scale-95 text-sm sm:text-base"
+            className="w-full sm:w-auto px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 hover:shadow-lg transition-transform duration-300 transform hover:scale-105 active:scale-95 text-sm sm:text-base"
           >
             Confirmar reserva
           </button>
@@ -118,4 +118,3 @@ export default function ReservaPage() {
   );
 }
 
-// se me olvido hacer el commit pero ya quedó listo la corrección, ahora falta volver a implementar las funcionalidades de los sprint 9 y 10, yluego continuar con el 11.

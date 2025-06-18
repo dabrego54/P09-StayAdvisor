@@ -5,15 +5,6 @@ import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-<Toaster
-  richColors
-  position="top-center"
-  duration={4000}
-  expand={true}
-  closeButton
-/>
-
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,9 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
           <Toaster richColors position="top-center" />
           {children}

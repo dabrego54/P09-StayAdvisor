@@ -1,15 +1,25 @@
 import mongoose, { Schema, model, models } from 'mongoose';
 
 const HotelSchema = new Schema({
-  id: { type: Number, required: true },
   name: { type: String, required: true },
-  location: { type: String, required: true },
-  experience: { type: String, required: true },
-  price: { type: Number, required: true },
-  services: { type: [String], required: true },
-  image: { type: String, required: false },
+  address: { type: String, required: true },
+  rating: { type: Number, required: false },
+  totalRatings: { type: Number, required: false },
+  placeId: { type: String, required: false },
+  location: {
+    lat: { type: Number },
+    lng: { type: Number },
+  },
+  photoReference: { type: String, required: false },
+  services: { type: [String], default: [] },
+  price: { type: Number, required: false },
+
+  // Calificación interna combinada
+  combinedRating: { type: Number, default: null },
+
+  // Fechas ocupadas (para STAY-97)
+  bookedDates: { type: [Date], default: [] },
 });
 
 const Hotel = models.Hotel || model('Hotel', HotelSchema);
-
 export default Hotel;

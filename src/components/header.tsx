@@ -117,7 +117,7 @@ export default function Header() {
 
                   <button
                     onClick={() => {
-                      router.push('/reservas');
+                      router.push('/misreservas');
                       setMenuOpen(false);
                     }}
                     className="w-full text-left px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
