@@ -14,19 +14,20 @@ export async function GET(req: NextRequest) {
   try {
     const reservas = await Reserva.find({ hotelPlaceId: placeId });
 
-    // Generar lista de fechas ocupadas
-    const bookedDates: string[] = [];
+    const fechasOcupadas: Record<string, string> = {};
 
     for (const reserva of reservas) {
       const checkIn = new Date(reserva.checkIn);
       const checkOut = new Date(reserva.checkOut);
+      const nombre = reserva.contactName || 'Reserva';
 
       for (let d = new Date(checkIn); d <= checkOut; d.setDate(d.getDate() + 1)) {
-        bookedDates.push(new Date(d).toISOString().split('T')[0]);
+        const fechaStr = new Date(d).toISOString().split('T')[0];
+        fechasOcupadas[fechaStr] = nombre;
       }
     }
 
-    return NextResponse.json({ success: true, bookedDates });
+    return NextResponse.json({ success: true, fechasOcupadas });
   } catch (error) {
     console.error('Error al obtener disponibilidad:', error);
     return NextResponse.json({ success: false, message: 'Error del servidor' }, { status: 500 });

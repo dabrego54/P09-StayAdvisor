@@ -69,7 +69,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center px-4 sm:px-6">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-white flex items-center justify-center px-4 sm:px-6">
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md">
         <h1 className="text-2xl sm:text-3xl font-bold text-center text-blue-600 mb-6">
           {isRegistering ? 'Crear cuenta' : 'Iniciar sesión'}

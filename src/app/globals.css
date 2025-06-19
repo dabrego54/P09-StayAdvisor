@@ -1,7 +1,29 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@reference "tailwindcss";
 
+/* Estilo base global para modo claro */
 body {
-  @apply bg-white text-gray-900;
+  @apply bg-white text-gray-900 antialiased leading-relaxed;
+}
+
+/* Encabezados visibles */
+h1, h2, h3, h4, h5, h6 {
+  @apply text-gray-800;
+}
+
+/* Botones y cajas en modo claro */
+button {
+  @apply font-medium;
+}
+
+.bg-card {
+  @apply bg-white border border-gray-200 shadow-sm;
+}
+
+.text-light {
+  @apply text-gray-800;
+}
+
+.text-muted {
+  @apply text-gray-500;
 }

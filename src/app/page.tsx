@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white text-gray-800 flex flex-col">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-white text-gray-800 flex flex-col">
       <Header />
 
       <main className="flex-1 px-4 sm:px-6 py-12 sm:py-20 max-w-5xl mx-auto text-center">

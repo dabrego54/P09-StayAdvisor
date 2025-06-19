@@ -2,25 +2,27 @@
 
 import { useEffect, useState } from 'react';
 
-export function useHotelAvailability(placeId: string) {
-  const [bookedDates, setBookedDates] = useState<string[]>([]);
+export const useHotelAvailability = (placeId: string) => {
+  const [fechasOcupadas, setFechasOcupadas] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDates = async () => {
+    const fetchData = async () => {
       try {
         const res = await fetch(`/api/admin/disponibilidad?placeId=${placeId}`);
         const data = await res.json();
-        if (data.success) setBookedDates(data.bookedDates);
-      } catch (err) {
-        console.error('Error cargando disponibilidad:', err);
+        if (data.success) {
+          setFechasOcupadas(data.fechasOcupadas || {});
+        }
+      } catch (error) {
+        console.error('Error al obtener fechas ocupadas', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDates();
+    fetchData();
   }, [placeId]);
 
-  return { bookedDates, loading };
-}
+  return { fechasOcupadas, loading };
+};

@@ -70,7 +70,7 @@ export default function SearchPage() {
 
   // 🔧 Mostramos igual la interfaz aunque esté cargando
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-white flex flex-col">
       <Header />
 
       {/* Barra de búsqueda */}
