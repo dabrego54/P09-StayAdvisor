@@ -4,7 +4,7 @@ import { jwtVerify } from 'jose';
 
 const PUBLIC_FILE = /\.(.*)$/;
 const secret = new TextEncoder().encode(process.env.JWT_SECRET); // asegúrate que esté definido
-
+ 
 const protectedPaths = ['/search', '/reserva', '/confirmacion'];
 const dashboardPath = '/dashboard';
 

@@ -1,13 +1,17 @@
-// /src/app/dashboard/page.tsx
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const [hotelAsignado, setHotelAsignado] = useState({
+    nombre: 'Hotel Boutique Andes',
+    ubicacion: 'Valparaíso, Chile',
+    disponibilidad: 'Disponible',
+  });
 
   useEffect(() => {
     if (!user) {
@@ -19,10 +23,13 @@ export default function DashboardPage() {
 
   if (!user || (user.role !== 'hotelero' && user.role !== 'admin')) return null;
 
-  const hotelAsignado = {
-    nombre: 'Hotel Boutique Andes',
-    ubicacion: 'Valparaíso, Chile',
-    disponibilidad: 'Disponible',
+  // Función para alternar la disponibilidad
+  const toggleDisponibilidad = () => {
+    setHotelAsignado((prev) => ({
+      ...prev,
+      disponibilidad:
+        prev.disponibilidad === 'Disponible' ? 'Inactivo' : 'Disponible',
+    }));
   };
 
   return (
@@ -40,7 +47,19 @@ export default function DashboardPage() {
           <h2 className="text-xl font-semibold text-gray-800">Hotel asignado</h2>
           <p><strong>Nombre:</strong> {hotelAsignado.nombre}</p>
           <p><strong>Ubicación:</strong> {hotelAsignado.ubicacion}</p>
-          <p><strong>Estado:</strong> <span className="text-green-600 font-semibold">{hotelAsignado.disponibilidad}</span></p>
+          <div className="flex items-center gap-2">
+            <strong>Estado:</strong>
+            <button
+              onClick={toggleDisponibilidad}
+              className={`px-4 py-1 rounded font-semibold text-sm ${
+                hotelAsignado.disponibilidad === 'Disponible'
+                  ? 'bg-green-500 text-white hover:bg-green-600'
+                  : 'bg-gray-400 text-white hover:bg-gray-500'
+              }`}
+            >
+              {hotelAsignado.disponibilidad}
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
