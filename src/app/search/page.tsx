@@ -12,6 +12,7 @@ import type { HotelReal } from '@/types/HotelReal';
 import Link from 'next/link';
 import Header from '@/components/header';
 import fetchRealHotels from '@/utils/fetchRealHotels';
+import { Search } from 'lucide-react';
 
 export default function SearchPage() {
   const [selectedExperience, setSelectedExperience] = useState<string>('');
@@ -108,7 +109,6 @@ export default function SearchPage() {
     return () => clearTimeout(delay);
   }, [searchText]);
 
-
   const sortedHotels = [...hotels].sort((a, b) => {
     if (!sortByRating) return 0;
     const ratingA = a.combinedRating ?? a.rating ?? 0;
@@ -120,76 +120,76 @@ export default function SearchPage() {
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-white flex flex-col">
       <Header />
 
-      <div className="w-full px-4 sm:px-6 max-w-2xl bg-white rounded-2xl shadow-xl p-6 sm:p-8 m-auto mt-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
-          Buscar Hoteles Boutique
-        </h1>
+      <section className="w-full px-4 sm:px-8 lg:px-12 max-w-[1000px] mx-auto mt-8">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Buscar Hoteles Boutique</h1>
 
-        <div className="relative">
+        <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-full shadow-md px-4 py-2 relative focus-within:ring-2 focus-within:ring-blue-300 transition-all duration-200">
+          <Search className="text-gray-400 w-5 h-5" />
           <input
             type="text"
             value={searchText}
             onChange={handleSearchChange}
-            placeholder="Busca hoteles boutique: Casa Andina, Magnolia..."
-            className="w-full pl-10 p-3 sm:p-4 border border-gray-300 rounded-lg shadow-sm text-gray-800 placeholder-gray-500 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            placeholder="Busca hoteles boutique"
+            className="flex-1 border-none outline-none text-sm sm:text-base text-gray-800 placeholder-gray-500 px-2 bg-transparent"
           />
+          <button
+            onClick={handleSidebarToggle}
+            className="bg-blue-600 text-white text-sm font-semibold rounded-full px-4 py-2 hover:bg-blue-700 transition"
+          >
+            Filtros
+          </button>
 
           {showSuggestions && suggestions.length > 0 && (
-            <ul className="absolute z-10 bg-white w-full border rounded-md mt-1 shadow-md max-h-60 overflow-y-auto">
+            <ul className="absolute left-0 top-full mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-[999] max-h-72 overflow-y-auto animate-fade-in">
               {suggestions.map((s) => (
-                <li
+              <li
                   key={s.placeId}
                   onClick={() => handleSuggestionClick(s.description)}
-                  className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-sm text-gray-700"
+                  className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-sm text-gray-700 transition"
                 >
                   {s.description}
-                </li>
+              </li>
               ))}
             </ul>
           )}
         </div>
-
-        <button
-          onClick={handleSidebarToggle}
-          className="mt-4 w-full sm:w-auto px-6 py-3 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition text-sm sm:text-base"
-        >
-          Filtros
-        </button>
-      </div>
+      </section>
 
       {loading && (
         <p className="text-center text-gray-500 mt-6">Cargando hoteles...</p>
       )}
 
-      <div className="flex-1 mt-8 px-4 sm:px-6 max-w-5xl mx-auto w-full">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-700 mb-6">Resultados</h2>
+      <div className="flex-1 mt-8 px-4 sm:px-8 lg:px-12 w-full">
+        <div className="w-full max-w-[1600px] mx-auto">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-700 mb-6">Resultados</h2>
 
-        <div className="flex justify-end mb-4">
-          <button
-            className={`px-4 py-2 rounded font-semibold border transition ${
-              sortByRating
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-blue-600 border-blue-600'
-            }`}
-            onClick={() => setSortByRating((v) => !v)}
-          >
-            {sortByRating ? 'Ordenar por defecto' : 'Ordenar por mejor calificación'}
-          </button>
-        </div>
+          <div className="flex justify-end mb-4">
+            <button
+              className={`px-4 py-2 rounded font-semibold border transition ${
+                sortByRating
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-blue-600 border-blue-600'
+              }`}
+              onClick={() => setSortByRating((v) => !v)}
+            >
+              {sortByRating ? 'Ordenar por defecto' : 'Ordenar por mejor calificación'}
+            </button>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {sortedHotels.length > 0 ? (
-            sortedHotels.map((hotel, idx) => (
-              <HotelCard
-                key={hotel.placeId}
-                hotel={hotel}
-                apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY!}
-                ranking={sortByRating ? idx + 1 : undefined}
-              />
-            ))
-          ) : (
-            <p className="text-gray-500">No se encontraron resultados</p>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {sortedHotels.length > 0 ? (
+              sortedHotels.map((hotel, idx) => (
+                <HotelCard
+                  key={hotel.placeId}
+                  hotel={hotel}
+                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY!}
+                  ranking={sortByRating ? idx + 1 : undefined}
+                />
+              ))
+            ) : (
+              <p className="text-gray-500">No se encontraron resultados</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
