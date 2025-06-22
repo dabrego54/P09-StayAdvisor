@@ -27,3 +27,12 @@ button {
 .text-muted {
   @apply text-gray-500;
 }
+
+/* Para asegurar que los botones del calendario no se sobrepongan ni colapsen */
+.rdp {
+  @apply w-full max-w-md mx-auto;
+}
+
+.rdp-caption_label {
+  @apply text-lg font-bold text-center;
+}
