@@ -67,7 +67,7 @@ export default function Header() {
           <Link href="/" className="hover:text-blue-600 dark:hover:text-white">Página principal</Link>
           <Link href="/search" className="hover:text-blue-600 dark:hover:text-white">Hoteles</Link>
           <Link href="/nosotros" className="hover:text-blue-600 dark:hover:text-white">Sobre nosotros</Link>
-          <Link href="/reservas" className="hover:text-blue-600 dark:hover:text-white">Mis reservas</Link>
+          <Link href="/misreservas" className="hover:text-blue-600 dark:hover:text-white">Mis reservas</Link>
         </nav>
 
         {/* User & theme toggle */}

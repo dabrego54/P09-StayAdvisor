@@ -83,9 +83,9 @@ export default function Home() {
           <div>
             <h4 className="font-semibold mb-2 !text-white">Sobre nosotros</h4>
             <ul className="text-sm space-y-1 text-gray-300">
-              <li><a href="#" className="hover:underline">Quiénes somos</a></li>
-              <li><a href="#" className="hover:underline">Nuestro equipo</a></li>
-              <li><a href="#" className="hover:underline">Contacto</a></li>
+              <li><a href="/nosotros" className="hover:underline">Quiénes somos</a></li>
+              <li><a href="/nosotros" className="hover:underline">Nuestro equipo</a></li>
+              <li><a href="/contacto" className="hover:underline">Contacto</a></li>
             </ul>
           </div>
 
