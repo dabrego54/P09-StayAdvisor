@@ -4,51 +4,104 @@
 
 import Header from '@/components/header';
 import Link from 'next/link';
+import { FaMapMarkedAlt, FaBolt, FaStar } from 'react-icons/fa';
+import HotelCarrusel from '@/components/HotelCarrusel';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-white text-gray-800 flex flex-col">
+    <div className="min-h-screen bg-white text-gray-900 flex flex-col">
       <Header />
 
-      <main className="flex-1 px-4 sm:px-6 py-12 sm:py-20 max-w-5xl mx-auto text-center">
-        <h2 className="text-3xl sm:text-4xl font-extrabold leading-snug mb-6">
-          Explora experiencias únicas<br />en hoteles boutique de Chile
-        </h2>
-        <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto mb-8 sm:mb-10">
-          Descubre alojamientos seleccionados que combinan estilo, exclusividad y calidez. Planifica tu próxima escapada con una plataforma hecha para ti.
-        </p>
-
-        <div className="flex flex-col sm:flex-row justify-center gap-4">
+      {/* Hero Section */}
+      <section className="relative h-[80vh] bg-gradient-to-b from-[#9dbcf5] via-[#f8f9fc] to-white flex items-center justify-center">
+        <div className="absolute inset-0 bg-white/20 backdrop-blur-sm z-0" />
+        <div className="relative z-10 text-center px-4">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight text-balance">
+            Vive tus vacaciones con estilo.
+          </h1>
+          <p className="mt-4 text-lg sm:text-xl text-gray-800 max-w-2xl mx-auto text-balance">
+            Encuentra hoteles boutique únicos para una escapada inolvidable.
+          </p>
           <Link
             href="/search"
-            className="px-6 py-3 bg-blue-600 text-white text-base sm:text-lg font-medium rounded-lg shadow hover:bg-blue-700 transition text-center"
+            className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-full text-lg shadow-lg transition-transform hover:scale-105"
           >
-            Buscar Hoteles
+            Buscar hoteles
           </Link>
         </div>
-      </main>
+      </section>
 
-      <section className="bg-white py-12 sm:py-16 mt-10 sm:mt-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-10">
-          <div className="bg-blue-50 p-6 rounded-xl shadow text-center">
-            <h3 className="text-lg sm:text-xl font-semibold mb-2 text-blue-700">Hoteles seleccionados</h3>
-            <p className="text-sm sm:text-base">Solo alojamientos boutique con altos estándares de calidad, diseño y servicio.</p>
+      {/* ¿Por qué StayAdvisor? */}
+      <section className="bg-[#0f172a] py-20">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center !text-white mb-12">¿Por qué StayAdvisor?</h2>
+        <div className="max-w-6xl mx-auto px-6 grid gap-10 sm:grid-cols-2 md:grid-cols-3">
+          <div className="bg-white rounded-2xl shadow-lg p-6 text-center hover:shadow-xl transition">
+            <FaMapMarkedAlt className="text-blue-600 text-4xl mx-auto mb-4" />
+            <h3 className="font-semibold text-xl text-gray-800 mb-2">Ubicaciones exclusivas</h3>
+            <p className="text-gray-600 text-sm">Explora alojamientos boutique en los rincones más inspiradores.</p>
           </div>
-
-          <div className="bg-blue-50 p-6 rounded-xl shadow text-center">
-            <h3 className="text-lg sm:text-xl font-semibold mb-2 text-blue-700">Experiencias personalizadas</h3>
-            <p className="text-sm sm:text-base">Elige por tipo de experiencia: naturaleza, lujo, costa o montaña. Tú decides cómo quieres viajar.</p>
+          <div className="bg-white rounded-2xl shadow-lg p-6 text-center hover:shadow-xl transition">
+            <FaBolt className="text-yellow-500 text-4xl mx-auto mb-4" />
+            <h3 className="font-semibold text-xl text-gray-800 mb-2">Reservas en minutos</h3>
+            <p className="text-gray-600 text-sm">Plataforma rápida y segura. Gestiona tu escapada sin complicaciones.</p>
           </div>
-
-          <div className="bg-blue-50 p-6 rounded-xl shadow text-center">
-            <h3 className="text-lg sm:text-xl font-semibold mb-2 text-blue-700">Reservas en minutos</h3>
-            <p className="text-sm sm:text-base">Con nuestro sistema ágil y simple, reservas en pocos pasos y sin complicaciones.</p>
+          <div className="bg-white rounded-2xl shadow-lg p-6 text-center hover:shadow-xl transition">
+            <FaStar className="text-pink-500 text-4xl mx-auto mb-4" />
+            <h3 className="font-semibold text-xl text-gray-800 mb-2">Experiencias únicas</h3>
+            <p className="text-gray-600 text-sm">Cada hotel ha sido elegido por su carácter, diseño y servicio personalizado.</p>
           </div>
         </div>
       </section>
 
-      <footer className="mt-12 sm:mt-20 py-6 sm:py-8 border-t text-center text-xs sm:text-sm text-gray-400">
-        © {new Date().getFullYear()} StayAdvisor — Todos los derechos reservados.
+      {/* Carrusel de Hoteles desde API */}
+      <HotelCarrusel />
+
+      {/* Footer */}
+      <footer className="bg-[#0f172a] text-white py-12 mt-20">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+    
+          {/* Branding */}
+          <div>
+            <h3 className="text-xl font-bold mb-2 !text-white">StayAdvisor</h3>
+            <p className="text-sm text-gray-300">
+              Tu guía premium para encontrar hoteles boutique. Vive experiencias únicas con solo unos clics.
+            </p>
+          </div>
+
+          {/* Enlaces */}
+          <div>
+            <h4 className="font-semibold mb-2 !text-white">Navegación</h4>
+            <ul className="text-sm space-y-1 text-gray-300">
+              <li><a href="/" className="hover:underline">Página principal</a></li>
+              <li><a href="/search" className="hover:underline">Hoteles</a></li>
+              <li><a href="/#beneficios" className="hover:underline">Beneficios</a></li>
+              <li><a href="/#destacados" className="hover:underline">Destacados</a></li>
+            </ul>
+          </div>
+
+          {/* Sobre Nosotros */}
+          <div>
+            <h4 className="font-semibold mb-2 !text-white">Sobre nosotros</h4>
+            <ul className="text-sm space-y-1 text-gray-300">
+              <li><a href="#" className="hover:underline">Quiénes somos</a></li>
+              <li><a href="#" className="hover:underline">Nuestro equipo</a></li>
+              <li><a href="#" className="hover:underline">Contacto</a></li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="font-semibold mb-2 !text-white">Legal</h4>
+            <ul className="text-sm space-y-1 text-gray-300">
+              <li><a href="#" className="hover:underline">Términos y condiciones</a></li>
+              <li><a href="#" className="hover:underline">Política de privacidad</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-10 text-center text-xs text-gray-400">
+          © {new Date().getFullYear()} StayAdvisor — Todos los derechos reservados.
+        </div>
       </footer>
     </div>
   );
