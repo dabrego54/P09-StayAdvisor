@@ -1,28 +1,26 @@
-'use client';
+// /hooks/useHotelAvailability.ts
 
 import { useEffect, useState } from 'react';
 
-export const useHotelAvailability = (placeId: string) => {
+export const useHotelAvailability = (placeId: string, refreshTrigger?: any) => {
   const [fechasOcupadas, setFechasOcupadas] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`/api/admin/disponibilidad?placeId=${placeId}`);
-        const data = await res.json();
-        if (data.success) {
-          setFechasOcupadas(data.fechasOcupadas || {});
-        }
-      } catch (error) {
-        console.error('Error al obtener fechas ocupadas', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchFechas = async () => {
+    try {
+      const res = await fetch(`/api/admin/disponibilidad?placeId=${placeId}`);
+      const data = await res.json();
+      setFechasOcupadas(data.fechasOcupadas || {});
+    } catch (error) {
+      console.error('Error al cargar disponibilidad:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [placeId]);
+  useEffect(() => {
+    if (placeId) fetchFechas();
+  }, [placeId, refreshTrigger]); // <- se recarga si cambia
 
   return { fechasOcupadas, loading };
 };

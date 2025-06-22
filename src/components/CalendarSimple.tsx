@@ -18,28 +18,27 @@ export default function CalendarSimple({ fechasOcupadas }: Props) {
     setOcupadas(new Set(Object.keys(fechasOcupadas)));
   }, [fechasOcupadas]);
 
-  const formatDate = (date: Date): string => {
-    return date.toISOString().split('T')[0];
-  };
+  const formatDate = (date: Date): string => date.toISOString().split('T')[0];
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <div className="w-full h-full bg-white rounded-xl shadow border p-4 flex items-center justify-center">
+    <div className="flex justify-center items-center w-full h-full">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-md border p-6">
         <Calendar
           onChange={(val) => setValue(val as Date)}
           value={value}
+          className="w-full"
           tileClassName={({ date }) => {
             const ymd = formatDate(date);
             return ocupadas.has(ymd)
-              ? 'bg-red-200 text-red-800 font-semibold rounded-lg'
-              : '';
+              ? 'bg-red-100 text-red-700 font-semibold rounded-lg'
+              : 'hover:bg-gray-100 transition';
           }}
           tileContent={({ date }) => {
             const ymd = formatDate(date);
             const contacto = fechasOcupadas[ymd];
             return contacto ? (
               <Tippy content={`Reservado por ${contacto}`}>
-                <span className="block text-[10px] text-red-700 text-center mt-1 font-semibold">
+                <span className="block mt-1 text-[10px] text-red-600 text-center font-medium">
                   {contacto.split(' ')[0]}
                 </span>
               </Tippy>
