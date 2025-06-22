@@ -75,6 +75,12 @@ export default function ReservaPage() {
         body: JSON.stringify(reservaPayload),
       });
 
+      if (response.status === 409) {
+        const errorData = await response.json();
+        toast.error(errorData.message || 'Fechas no disponibles.');
+        return;
+      }
+
       if (!response.ok) throw new Error('Fallo al guardar reserva');
 
       localStorage.setItem('reservaConfirmada', JSON.stringify(formData));
