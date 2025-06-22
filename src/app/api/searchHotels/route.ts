@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&region=cl&key=${apiKey}`;
+    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&region=cl&type=lodging&key=${apiKey}`;
     const response = await fetch(url);
     const data = await response.json();
 

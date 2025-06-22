@@ -1,6 +1,8 @@
+// /app/search/page.tsx
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ExperienceSelector from '@/components/ExperienceSelector';
 import ServiceFilter from '@/components/ServiceFilter';
 import { filterHotels } from '@/utils/filterHotels';
@@ -9,7 +11,7 @@ import type { Hotel } from '@/types/Hotel';
 import type { HotelReal } from '@/types/HotelReal';
 import Link from 'next/link';
 import Header from '@/components/header';
-import  fetchRealHotels from '@/utils/fetchRealHotels';
+import fetchRealHotels from '@/utils/fetchRealHotels';
 
 export default function SearchPage() {
   const [selectedExperience, setSelectedExperience] = useState<string>('');
@@ -18,8 +20,12 @@ export default function SearchPage() {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [hotels, setHotels] = useState<HotelReal[]>([]);
   const [experienceOptions, setExperienceOptions] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true); // 🔵 Agregado para manejar carga
+  const [loading, setLoading] = useState(true);
   const [sortByRating, setSortByRating] = useState(false);
+
+  const [suggestions, setSuggestions] = useState<{ description: string; placeId: string }[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleExperienceSelect = (experience: string) => {
     setSelectedExperience(experience);
@@ -44,12 +50,20 @@ export default function SearchPage() {
     );
   };
 
+  const handleSuggestionClick = async (desc: string) => {
+    setSearchText(desc);
+    setSuggestions([]);
+    setShowSuggestions(false);
+    setLoading(true);
+    const hoteles = await fetchRealHotels(desc);
+    setHotels(hoteles);
+    setLoading(false);
+  };
+
   useEffect(() => {
     const delayDebounce = setTimeout(async () => {
       setLoading(true);
-      const query = searchText.trim().length >= 2 ? searchText : 'Hotel';
-      console.log('🌎 Buscando hoteles con query:', query);
-
+      const query = searchText.trim().length >= 2 ? `${searchText} hotel` : 'Hotel';
       const hoteles = await fetchRealHotels(query);
       setHotels(hoteles);
       setLoading(false);
@@ -58,22 +72,54 @@ export default function SearchPage() {
     return () => clearTimeout(delayDebounce);
   }, [searchText]);
 
-  // Ordena los hoteles según el toggle
+  useEffect(() => {
+    const delay = setTimeout(async () => {
+      const term = searchText.trim();
+      if (term.length < 2) {
+        setSuggestions([]);
+        setShowSuggestions(false);
+        return;
+      }
+
+      abortControllerRef.current?.abort();
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      try {
+        const res = await fetch(`/api/autocomplete?input=${term}`, { signal: controller.signal });
+        const data = await res.json();
+
+        const mapped = (data.results || []).slice(0, 6).map((hotel: any) => ({
+          description: `${hotel.name} - ${hotel.formatted_address}`,
+          placeId: hotel.place_id,
+        }));
+
+        setSuggestions(mapped);
+        setShowSuggestions(true);
+
+        const found = mapped.find((s: { description: string }) => s.description === term);
+        if (found) setShowSuggestions(false);
+      } catch {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delay);
+  }, [searchText]);
+
+
   const sortedHotels = [...hotels].sort((a, b) => {
     if (!sortByRating) return 0;
-    // 🟢 Ordenar por combinedRating si existe, fallback a rating
-      const ratingA = a.combinedRating ?? a.rating ?? 0;
-      const ratingB = b.combinedRating ?? b.rating ?? 0;
-      return ratingB - ratingA;
+    const ratingA = a.combinedRating ?? a.rating ?? 0;
+    const ratingB = b.combinedRating ?? b.rating ?? 0;
+    return ratingB - ratingA;
   });
 
-
-  // 🔧 Mostramos igual la interfaz aunque esté cargando
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-white flex flex-col">
       <Header />
 
-      {/* Barra de búsqueda */}
       <div className="w-full px-4 sm:px-6 max-w-2xl bg-white rounded-2xl shadow-xl p-6 sm:p-8 m-auto mt-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
           Buscar Hoteles Boutique
@@ -87,6 +133,20 @@ export default function SearchPage() {
             placeholder="Busca hoteles boutique: Casa Andina, Magnolia..."
             className="w-full pl-10 p-3 sm:p-4 border border-gray-300 rounded-lg shadow-sm text-gray-800 placeholder-gray-500 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
+
+          {showSuggestions && suggestions.length > 0 && (
+            <ul className="absolute z-10 bg-white w-full border rounded-md mt-1 shadow-md max-h-60 overflow-y-auto">
+              {suggestions.map((s) => (
+                <li
+                  key={s.placeId}
+                  onClick={() => handleSuggestionClick(s.description)}
+                  className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-sm text-gray-700"
+                >
+                  {s.description}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <button
@@ -101,7 +161,6 @@ export default function SearchPage() {
         <p className="text-center text-gray-500 mt-6">Cargando hoteles...</p>
       )}
 
-      {/* Resultados */}
       <div className="flex-1 mt-8 px-4 sm:px-6 max-w-5xl mx-auto w-full">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-700 mb-6">Resultados</h2>
 

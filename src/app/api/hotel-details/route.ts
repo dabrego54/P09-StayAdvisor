@@ -1,3 +1,5 @@
+// /api/hotel-details/route.ts
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const placeId = searchParams.get('placeId');

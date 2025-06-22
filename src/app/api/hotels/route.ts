@@ -1,3 +1,5 @@
+// /api/hotels/route.ts
+
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import  HotelModel  from '@/models/Hotel';
