@@ -49,24 +49,20 @@ export default function ReservasActivasList({ placeId }: Props) {
         <p className="text-sm text-gray-500">No hay reservas activas.</p>
       ) : (
         <div className="space-y-4">
-          {reservas.map((reserva) => (
-            <div key={reserva._id}>
-              <ReservaEditorCard
-                reservaId={reserva._id}
-                nombre={reserva.contactName}
-                checkIn={reserva.checkIn}
-                checkOut={reserva.checkOut}
-                placeId={placeId}
-                onSuccess={fetchReservas}
-              />
-              {reserva.preferencias && (
-                <p className="text-sm text-gray-600 mt-1">
-                  <strong>Preferencias:</strong> {reserva.preferencias}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
+  {reservas.map((reserva) => (
+    <ReservaEditorCard
+      key={reserva._id}
+      reservaId={reserva._id}
+      nombre={reserva.contactName}
+      checkIn={reserva.checkIn}
+      checkOut={reserva.checkOut}
+      preferencias={reserva.preferencias} // ✅ pasar el campo aquí
+      placeId={placeId}
+      onSuccess={fetchReservas}
+    />
+  ))}
+</div>
+
       )}
     </div>
   );

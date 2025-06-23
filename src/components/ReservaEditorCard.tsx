@@ -10,8 +10,9 @@ interface Props {
   nombre: string;
   checkIn: string;
   checkOut: string;
+  preferencias?: string; // ✅ nuevo campo opcional
   onSuccess?: () => void;
-  placeId: string; // ← necesario para verificar disponibilidad manual
+  placeId: string;
 }
 
 export default function ReservaEditorCard({
@@ -19,6 +20,7 @@ export default function ReservaEditorCard({
   nombre,
   checkIn,
   checkOut,
+  preferencias,
   onSuccess,
   placeId,
 }: Props) {
@@ -29,7 +31,6 @@ export default function ReservaEditorCard({
   const [loading, setLoading] = useState(false);
   const [estado, setEstado] = useState<'ok' | 'conflicto' | 'desconocido'>('desconocido');
 
-  // Verificar si hay conflicto con fechas manuales
   useEffect(() => {
     const verificarConflicto = async () => {
       try {
@@ -99,6 +100,12 @@ export default function ReservaEditorCard({
       <p className="text-sm text-gray-500 mb-1">
         Rango actual: {dayjs(checkIn).format('DD MMM')} → {dayjs(checkOut).format('DD MMM')}
       </p>
+
+      {preferencias && (
+        <p className="text-sm text-gray-700 mb-2">
+          <strong>Preferencias:</strong> {preferencias}
+        </p>
+      )}
 
       {estado === 'conflicto' && (
         <p className="text-sm font-medium text-red-600 mb-2">⚠️ Conflicto con fechas bloqueadas</p>

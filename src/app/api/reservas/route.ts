@@ -126,8 +126,9 @@ export async function GET(req: NextRequest) {
 
   try {
     const reservas = await Reserva.find({ hotelPlaceId: placeId }).select(
-      '_id contactName checkIn checkOut'
-    );
+  '_id contactName checkIn checkOut preferencias'
+  );
+
 
     return NextResponse.json({ success: true, reservas });
   } catch (error) {
