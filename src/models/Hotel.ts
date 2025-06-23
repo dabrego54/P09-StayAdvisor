@@ -19,6 +19,7 @@ const HotelSchema = new Schema({
 
   // Fechas ocupadas (para STAY-97)
   bookedDates: { type: [Date], default: [] },
+  welcomeMessage: { type: String, default: '' },
 });
 
 const Hotel = models.Hotel || model('Hotel', HotelSchema);

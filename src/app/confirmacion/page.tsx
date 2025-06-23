@@ -13,6 +13,7 @@ export default function ConfirmacionPage() {
   const [hotel, setHotel] = useState<HotelReal | null>(null);
   const [reserva, setReserva] = useState<BookingData | null>(null);
   const [reservationId, setReservationId] = useState<number | null>(null);
+  const [mensajeBienvenida, setMensajeBienvenida] = useState<string | null>(null);
 
   useEffect(() => {
     const hotelData = localStorage.getItem('hotelSeleccionado');
@@ -26,6 +27,21 @@ export default function ConfirmacionPage() {
       toast.error('No se encontraron datos de la reserva.');
     }
   }, []);
+
+  useEffect(() => {
+    const fetchMensaje = async () => {
+      if (!hotel?.placeId) return;
+
+      const res = await fetch(`/api/hotel-details?placeId=${hotel.placeId}`);
+      const data = await res.json();
+
+      if (data.success && data.hotel?.welcomeMessage) {
+        setMensajeBienvenida(data.hotel.welcomeMessage);
+      }
+    };
+
+    if (hotel) fetchMensaje();
+  }, [hotel]);
 
   if (!hotel || !reserva) {
     return (
@@ -44,6 +60,12 @@ export default function ConfirmacionPage() {
       <h1 className="text-2xl sm:text-3xl font-bold text-center text-green-700 mb-2">✅ Reserva Confirmada</h1>
       {reservationId && (
         <p className="text-sm text-center text-gray-500 mb-6">Código de reserva: #{reservationId}</p>
+      )}
+
+      {mensajeBienvenida && (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded">
+          <p className="italic">{mensajeBienvenida}</p>
+        </div>
       )}
 
       <BookingSummary
@@ -68,7 +90,6 @@ export default function ConfirmacionPage() {
         </button>
       </div>
 
-      {/* Formulario de calificación visible tras confirmar reserva */}
       {user?.id && hotel?.placeId && (
         <div className="mt-10 border-t pt-6">
           <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 text-center">
