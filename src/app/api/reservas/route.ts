@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { hotelPlaceId, contactName, checkIn, checkOut } = body;
+    const { hotelPlaceId, contactName, checkIn, checkOut, preferencias } = body;
 
     if (!hotelPlaceId || !checkIn || !checkOut || !contactName) {
       return NextResponse.json({ success: false, message: 'Datos incompletos' }, { status: 400 });

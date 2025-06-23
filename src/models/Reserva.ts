@@ -19,6 +19,10 @@ const reservaSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  preferencias: {
+    type: String,
+    default: '',
+  },
 });
 
 export default models.Reserva || mongoose.model('Reserva', reservaSchema);

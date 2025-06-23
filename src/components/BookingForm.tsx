@@ -15,6 +15,7 @@ export type BookingData = {
   email: string;
   phone?: string;
   notes?: string;
+  preferencias?: string;
 };
 
 export default function BookingForm({ onChange }: BookingFormProps) {
@@ -27,6 +28,7 @@ export default function BookingForm({ onChange }: BookingFormProps) {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [notes, setNotes] = useState('');
+  const [preferencias, setPreferencias] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 
@@ -49,11 +51,11 @@ export default function BookingForm({ onChange }: BookingFormProps) {
 
   useEffect(() => {
     if (validate()) {
-      onChange({ checkIn, checkOut, guests, fullName, email, phone, notes });
+      onChange({ checkIn, checkOut, guests, fullName, email, phone, notes, preferencias });
     } else {
       onChange(null);
     }
-  }, [checkIn, checkOut, guests, fullName, email, phone, notes]);
+  }, [checkIn, checkOut, guests, fullName, email, phone, notes, preferencias]);
 
   const handleBlur = (field: string) => {
     setTouched(prev => ({ ...prev, [field]: true }));
@@ -172,15 +174,29 @@ export default function BookingForm({ onChange }: BookingFormProps) {
             className="rounded-lg border p-3 sm:p-4 text-gray-800 placeholder-gray-500 text-sm sm:text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="preferencias" className="mb-1 text-sm font-medium text-gray-700">
+            Preferencias (opcional)
+          </label>
+          <textarea
+            id="preferencias"
+            rows={3}
+            value={preferencias}
+            onChange={(e) => setPreferencias(e.target.value)}
+            placeholder="Ej: Tipo de almohada, hora estimada de llegada, bebida favorita..."
+            className="rounded-lg border p-3 sm:p-4 text-gray-800 placeholder-gray-500 text-sm sm:text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
       </div>
 
       <div className="flex justify-center mt-6">
-      <button
-        onClick={() => router.back()}
-        className="px-6 py-3 text-blue-600 border border-blue-500 rounded-lg hover:bg-blue-50 transition-transform transition-shadow duration-300 transform hover:scale-105 active:scale-95 text-sm sm:text-base"
-      >
-        ← Volver atrás
-      </button>
+        <button
+          onClick={() => router.back()}
+          className="px-6 py-3 text-blue-600 border border-blue-500 rounded-lg hover:bg-blue-50 transition-transform transition-shadow duration-300 transform hover:scale-105 active:scale-95 text-sm sm:text-base"
+        >
+          ← Volver atrás
+        </button>
       </div>
     </div>
   );

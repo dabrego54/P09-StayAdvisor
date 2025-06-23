@@ -74,6 +74,13 @@ export default function ConfirmacionPage() {
         apiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY!}
       />
 
+      {reserva?.preferencias && (
+        <div className="mt-4">
+          <h3 className="font-semibold text-gray-700">Preferencias del huésped:</h3>
+          <p className="text-gray-600 whitespace-pre-line">{reserva.preferencias}</p>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
         <a
           href="/"
