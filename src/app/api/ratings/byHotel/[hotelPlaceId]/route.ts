@@ -3,19 +3,15 @@ import RatingInterno from '@/models/RatingInterno';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
-    req: NextRequest,
-    context: { params: {  hotelPlaceId: string } }
+  req: NextRequest,
+  context: { params: { hotelPlaceId: string } }
 ) {
   await connectDB();
 
-  const getParams = async () => context.params;
-  const { hotelPlaceId } = await getParams();
+  const { hotelPlaceId } = context.params;
 
   try {
-    const ratings = await RatingInterno.find({
-      hotelPlaceId
-    });
-
+    const ratings = await RatingInterno.find({ hotelPlaceId });
     return NextResponse.json(ratings);
   } catch (error) {
     console.error('Error al obtener calificaciones internas:', error);
