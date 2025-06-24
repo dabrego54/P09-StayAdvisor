@@ -1,54 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
-import RatingInterno from '@/models/RatingInterno';
-import Reserva from '@/models/Reserva'; // Asegúrate de tener este modelo
-import mongoose from 'mongoose';
-import { invalidateHotelCache } from '@/utils/cacheHotelSearch';
+import Rating from '@/models/RatingInterno';
+import Reserva from '@/models/Reserva';
 
 export async function POST(req: NextRequest) {
   await connectDB();
 
   try {
-    const body = await req.json();
-    const { hotelPlaceId, userId, rating, comment } = body;
+    const { hotelPlaceId, userId, rating, opiniones } = await req.json();
 
     if (!hotelPlaceId || !userId || !rating) {
-      return NextResponse.json({ message: 'Faltan campos obligatorios' }, { status: 400 });
+      return NextResponse.json({ success: false, message: 'Faltan datos' }, { status: 400 });
     }
 
-    const objectId = new mongoose.Types.ObjectId(userId);
-
-    // ✅ Validar que exista una reserva previa
-    const existingReserva = await Reserva.findOne({
-      userId: objectId,
-      hotelPlaceId,
-    });
-
-    if (!existingReserva) {
-      return NextResponse.json(
-        { message: 'Debes haber reservado este hotel para poder calificar.' },
-        { status: 403 }
-      );
+    // Verificar si el usuario tiene reserva previa
+    const reserva = await Reserva.findOne({ hotelPlaceId, userId });
+    if (!reserva) {
+      return NextResponse.json({ success: false, message: 'No tienes reserva', code: 'NO_RESERVA' }, { status: 403 });
     }
 
-    const nuevoRating = new RatingInterno({
+    // Evitar duplicados
+    const yaExiste = await Rating.findOne({ hotelPlaceId, userId });
+    if (yaExiste) {
+      return NextResponse.json({ success: false, message: 'Ya calificaste este hotel' }, { status: 409 });
+    }
+
+    const nueva = await Rating.create({
       hotelPlaceId,
-      userId: objectId,
+      userId,
       rating,
-      comment: comment || '',
+      opiniones,
+      createdAt: new Date(),
     });
 
-    await nuevoRating.save();
-    invalidateHotelCache(hotelPlaceId);
-
-    return NextResponse.json({ message: 'Calificación guardada exitosamente' }, { status: 201 });
-  } catch (error: any) {
-    console.error('Error al guardar calificación:', error.message);
-
-    if (error.code === 11000) {
-      return NextResponse.json({ message: 'Ya calificaste este hotel' }, { status: 409 });
-    }
-
-    return NextResponse.json({ message: 'Error interno del servidor' }, { status: 500 });
+    return NextResponse.json({ success: true, rating: nueva });
+  } catch (error) {
+    console.error('Error al guardar calificación:', error);
+    return NextResponse.json({ success: false, message: 'Error del servidor' }, { status: 500 });
   }
 }
