@@ -2,13 +2,10 @@ import { connectDB } from '@/lib/mongodb';
 import RatingInterno from '@/models/RatingInterno';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(
-  req: NextRequest,
-  context: { params: { hotelPlaceId: string } }
-) {
+export async function GET(req: NextRequest, context: any) {
   await connectDB();
 
-  const { hotelPlaceId } = context.params;
+  const hotelPlaceId = context.params.hotelPlaceId;
 
   try {
     const ratings = await RatingInterno.find({ hotelPlaceId });
