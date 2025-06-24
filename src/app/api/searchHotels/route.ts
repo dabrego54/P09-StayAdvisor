@@ -45,7 +45,6 @@ export async function GET(req: NextRequest) {
       data.results.map(async (hotel: any) => {
         const placeId = hotel.place_id;
         const ratingExterna = hotel.rating;
-
         const internos = await RatingInterno.find({ hotelPlaceId: placeId });
 
         const internalRatingCount = internos.length;
@@ -71,6 +70,7 @@ export async function GET(req: NextRequest) {
           placeId,
           location: hotel.geometry.location,
           photoReference: hotel.photos?.[0]?.photo_reference || null,
+          vicinity: hotel.vicinity ?? '',
         };
       })
     );

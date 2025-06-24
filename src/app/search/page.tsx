@@ -3,24 +3,18 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import ExperienceSelector from '@/components/ExperienceSelector';
-import ServiceFilter from '@/components/ServiceFilter';
-import { filterHotels } from '@/utils/filterHotels';
 import HotelCard from '@/components/HotelCard';
-import type { Hotel } from '@/types/Hotel';
 import type { HotelReal } from '@/types/HotelReal';
 import Link from 'next/link';
 import Header from '@/components/header';
 import fetchRealHotels from '@/utils/fetchRealHotels';
 import { Search } from 'lucide-react';
+import HotelFilters from '@/components/HotelFilters';
 
 export default function SearchPage() {
-  const [selectedExperience, setSelectedExperience] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [hotels, setHotels] = useState<HotelReal[]>([]);
-  const [experienceOptions, setExperienceOptions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortByRating, setSortByRating] = useState(false);
 
@@ -28,9 +22,8 @@ export default function SearchPage() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const handleExperienceSelect = (experience: string) => {
-    setSelectedExperience(experience);
-  };
+  const [locationFilter, setLocationFilter] = useState('');
+  const [starFilter, setStarFilter] = useState(0);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -38,17 +31,6 @@ export default function SearchPage() {
 
   const handleSidebarToggle = () => {
     setIsSidebarOpen(prev => !prev);
-  };
-
-  const handleResetFilters = () => {
-    setSelectedExperience('');
-    setSelectedServices([]);
-  };
-
-  const handleServiceToggle = (service: string) => {
-    setSelectedServices(prev =>
-      prev.includes(service) ? prev.filter(s => s !== service) : [...prev, service]
-    );
   };
 
   const handleSuggestionClick = async (desc: string) => {
@@ -116,6 +98,26 @@ export default function SearchPage() {
     return ratingB - ratingA;
   });
 
+  const filteredHotels = sortedHotels.filter(hotel => {
+    const matchesLocation = locationFilter
+      ? (
+        hotel.vicinity?.toLowerCase().includes(locationFilter.toLowerCase()) ||
+        hotel.address?.toLowerCase().includes(locationFilter.toLowerCase())
+        )
+      : true;
+
+
+    const matchesStars = starFilter > 0
+      ? (hotel.rating ?? 0) >= starFilter
+      : true;
+
+    return matchesLocation && matchesStars;
+  });
+
+  const uniqueLocations = Array.from(
+    new Set(hotels.map(h => (h.vicinity ?? h.address).split(',')[0].trim()).filter((val): val is string => typeof val === 'string'))
+  );
+
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-white flex flex-col">
       <Header />
@@ -142,17 +144,29 @@ export default function SearchPage() {
           {showSuggestions && suggestions.length > 0 && (
             <ul className="absolute left-0 top-full mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-[999] max-h-72 overflow-y-auto animate-fade-in">
               {suggestions.map((s) => (
-              <li
+                <li
                   key={s.placeId}
                   onClick={() => handleSuggestionClick(s.description)}
                   className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-sm text-gray-700 transition"
                 >
                   {s.description}
-              </li>
+                </li>
               ))}
             </ul>
           )}
         </div>
+
+        {isSidebarOpen && (
+          <div className="mt-4">
+            <HotelFilters
+              locationFilter={locationFilter}
+              onLocationChange={setLocationFilter}
+              starFilter={starFilter}
+              onStarChange={setStarFilter}
+              availableLocations={uniqueLocations}
+            />
+          </div>
+        )}
       </section>
 
       {loading && (
@@ -177,8 +191,8 @@ export default function SearchPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedHotels.length > 0 ? (
-              sortedHotels.map((hotel, idx) => (
+            {filteredHotels.length > 0 ? (
+              filteredHotels.map((hotel, idx) => (
                 <HotelCard
                   key={hotel.placeId}
                   hotel={hotel}

@@ -18,6 +18,7 @@ export async function GET(request: Request) {
     const fields = [
       'name',
       'formatted_address',
+      'vicinity',
       'rating',
       'user_ratings_total',
       'photos',
@@ -42,6 +43,7 @@ export async function GET(request: Request) {
     return new Response(JSON.stringify({
       name: result.name,
       address: result.formatted_address,
+      vicinity: result.vicinity ?? '',
       rating: result.rating,
       totalRatings: result.user_ratings_total,
       photos: result.photos || [],

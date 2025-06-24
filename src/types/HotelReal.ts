@@ -13,6 +13,7 @@ export interface HotelReal {
   rating: number;
   totalRatings: number;
   placeId: string;
+  vicinity?: string;
   location: {
     lat: number;
     lng: number;
